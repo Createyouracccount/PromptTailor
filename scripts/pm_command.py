@@ -25,7 +25,12 @@ from prompt_tailor.usage import record_event  # noqa: E402
 def main() -> int:
     raw = " ".join(sys.argv[1:]).strip()
     if not raw:
-        print(json.dumps({"error": "빈 프롬프트"}, ensure_ascii=False))
+        # VSCode autocomplete submits the bare command on Enter — seen in real
+        # use 2026-08-20. Return a usage hint instead of a bare error.
+        print(json.dumps({
+            "error": "빈 프롬프트",
+            "usage": "/pm <요청> — 명령 뒤에 Space를 누르고 실제 요청을 입력하세요. 예: /pm 로그인 버그 고쳐줘",
+        }, ensure_ascii=False))
         return 0
     log_path = REPO_ROOT / "runs" / "pm_command.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)

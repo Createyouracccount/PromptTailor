@@ -276,6 +276,67 @@ class TestEstimateTokens(unittest.TestCase):
         self.assertGreaterEqual(pm_hook.estimate_tokens("a b c d e f g h i j k l"), 12)
 
 
+class TestApiPathSelection(unittest.TestCase):
+    """Opt-in direct API path: used only when BOTH env vars are set."""
+
+    CANNED = '{"action": "rewrite", "intent": "fix", "rewritten_prompt": "x", "changes": ["c"]}'
+
+    def setUp(self):
+        import os
+        for var in ("PROMPT_TAILOR_USE_API", "ANTHROPIC_API_KEY"):
+            os.environ.pop(var, None)
+
+    tearDown = setUp
+
+    def test_disabled_by_default_and_with_partial_env(self):
+        import os
+        from prompt_tailor import engine
+        self.assertFalse(engine.api_enabled())
+        os.environ["PROMPT_TAILOR_USE_API"] = "1"
+        self.assertFalse(engine.api_enabled())  # key missing
+        del os.environ["PROMPT_TAILOR_USE_API"]
+        os.environ["ANTHROPIC_API_KEY"] = "sk-test"
+        self.assertFalse(engine.api_enabled())  # opt-in missing
+
+    def test_rewrite_routes_to_api_when_enabled(self):
+        import os
+        from unittest import mock
+        from prompt_tailor import engine
+        os.environ["PROMPT_TAILOR_USE_API"] = "1"
+        os.environ["ANTHROPIC_API_KEY"] = "sk-test"
+        with mock.patch.object(engine, "call_api", return_value=self.CANNED) as api, \
+                mock.patch.object(engine, "call_claude") as cli:
+            r = engine.rewrite("버그 고쳐줘", "fable-5", retries=0)
+        api.assert_called_once()
+        cli.assert_not_called()
+        self.assertEqual(r.rewritten_prompt, "x")
+
+    def test_rewrite_uses_cli_by_default(self):
+        from unittest import mock
+        from prompt_tailor import engine
+        with mock.patch.object(engine, "call_claude", return_value=self.CANNED) as cli, \
+                mock.patch.object(engine, "call_api") as api:
+            engine.rewrite("버그 고쳐줘", "fable-5", retries=0)
+        cli.assert_called_once()
+        api.assert_not_called()
+
+    def test_call_api_without_sdk_raises_runtime_error(self):
+        import builtins
+        from unittest import mock
+        from prompt_tailor import engine
+        real_import = builtins.__import__
+
+        def block_anthropic(name, *a, **k):
+            if name == "anthropic":
+                raise ImportError("no module")
+            return real_import(name, *a, **k)
+
+        with mock.patch.object(builtins, "__import__", side_effect=block_anthropic):
+            with self.assertRaises(RuntimeError) as ctx:
+                engine.call_api("meta", "claude-haiku-4-5")
+        self.assertIn("prompt-tailor[api]", str(ctx.exception))
+
+
 class TestUsageRecords(unittest.TestCase):
     def setUp(self):
         import os

@@ -7,6 +7,7 @@ Pipeline: (raw prompt, target model) -> meta-prompt with model profile
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 from dataclasses import dataclass
@@ -186,6 +187,36 @@ def call_claude(prompt: str, model: str, timeout: int = 180) -> str:
     return proc.stdout.strip()
 
 
+def api_enabled() -> bool:
+    """Opt-in direct API path: both env vars must be set.
+
+    Off by default so subscription users are never surprise-billed; the
+    default path stays `claude -p` (login only, no key)."""
+    return bool(os.environ.get("PROMPT_TAILOR_USE_API")) and bool(os.environ.get("ANTHROPIC_API_KEY"))
+
+
+def call_api(prompt: str, model: str, timeout: int = 180) -> str:
+    """Direct Messages API call — skips the `claude -p` startup overhead
+    (~29.5k input tokens, ~99% of it the CLI's own system prompt)."""
+    try:
+        import anthropic
+    except ImportError:
+        raise RuntimeError(
+            "PROMPT_TAILOR_USE_API=1이지만 anthropic SDK가 없습니다. "
+            "설치: pip install 'prompt-tailor[api]'"
+        ) from None
+    client = anthropic.Anthropic()
+    try:
+        resp = client.with_options(timeout=float(timeout)).messages.create(
+            model=model,
+            max_tokens=4000,
+            messages=[{"role": "user", "content": prompt}],
+        )
+    except anthropic.APIError as e:
+        raise RuntimeError(f"API rewrite failed: {type(e).__name__}: {e}") from None
+    return "".join(b.text for b in resp.content if b.type == "text").strip()
+
+
 def parse_json_output(text: str) -> dict:
     """Extract the first JSON object from model output, tolerating code fences."""
     fenced = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
@@ -207,10 +238,11 @@ def rewrite(
     intent_routing: bool = True,
 ) -> RewriteResult:
     meta = build_meta_prompt(raw_prompt, target_model, concise=concise, intent_routing=intent_routing)
+    caller = call_api if api_enabled() else call_claude
     last_err: Exception | None = None
     for _ in range(retries + 1):
         try:
-            output = call_claude(meta, rewriter_model, timeout=timeout)
+            output = caller(meta, rewriter_model, timeout=timeout)
             data = parse_json_output(output)
             break
         except (ValueError, json.JSONDecodeError, RuntimeError, subprocess.TimeoutExpired) as e:

@@ -8,6 +8,9 @@ requires-python = ">=3.10"
 dependencies = []
 keywords = ["claude", "claude-code", "prompt", "prompt-engineering", "mcp"]
 
+[project.optional-dependencies]
+api = ["anthropic"]
+
 [project.urls]
 Repository = "https://github.com/Createyouracccount/PromptTailor"
 Issues = "https://github.com/Createyouracccount/PromptTailor/issues"

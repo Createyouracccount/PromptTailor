@@ -44,13 +44,17 @@ def process(item: dict) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--out", default=str(ROOT / "bench" / "gate_results.json"),
+                    help="결과 JSON 경로 (안정성 반복 실행 시 회차별 파일 지정)")
     args = ap.parse_args()
 
     items = [json.loads(l) for l in (ROOT / "bench" / "gate_set.jsonl").open(encoding="utf-8")]
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         results = list(pool.map(process, items))
 
-    (ROOT / "bench" / "gate_results.json").write_text(
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(
         json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
 
     ok = [r for r in results if "action" in r]

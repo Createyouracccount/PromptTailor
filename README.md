@@ -61,16 +61,26 @@ prompt-tailor "rough request" --concise          # faster, condensed meta-prompt
 
 **Hook auto mode (opt-in)** — rewrite every prompt automatically via a `UserPromptSubmit` hook. Run `bash claude-code/install.sh` for the settings snippet. Escape hatch: include `#raw` in a prompt to pass it through untouched. Prompts under 6 tokens or over 800 chars are skipped; if a rewrite doesn't finish within 28s it fails open (your original prompt goes through).
 
-**Cursor / any MCP client** — a built-in stdio MCP server exposes `refine_prompt(raw, target_model, concise)`:
+**Cursor / any MCP client** — a built-in stdio MCP server exposes `refine_prompt(raw, target_model, concise)` and `usage_stats` (your local record summary, no LLM call):
 
 ```jsonc
 // ~/.cursor/mcp.json
 { "mcpServers": { "prompt-tailor": { "command": "prompt-tailor-mcp" } } }
 ```
 
+```toml
+# Codex CLI — ~/.codex/config.toml
+[mcp_servers.prompt-tailor]
+command = "prompt-tailor-mcp"
+```
+
 ```bash
 claude mcp add prompt-tailor -- prompt-tailor-mcp   # register in Claude Code
 ```
+
+> **GUI apps may not see your shell PATH.** If the client reports the command not found, use the absolute path from `which prompt-tailor-mcp` as `command`, or use `python3` with `args: ["-m", "prompt_tailor.mcp_server"]`.
+
+The rewrite itself always runs through the `claude` CLI, so the machine needs it installed and logged in regardless of which client calls the tool. Rewrites target Claude models; other-model profiles are not provided (or validated).
 
 ## Same input, different models (real outputs)
 

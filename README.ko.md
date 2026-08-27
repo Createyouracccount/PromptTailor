@@ -39,12 +39,22 @@ prompt-tailor "요청" --concise                       # 축약 메타프롬프�
 
 **훅 자동 모드 (옵트인)** — 모든 프롬프트를 자동 재작성. `bash claude-code/install.sh`가 출력하는 settings 스니펫 참조. `#raw` 태그로 건별 우회, 6토큰 미만·800자 초과는 자동 무개입, 28초 내 미완료 시 원문 그대로 통과(fail-open).
 
-**Cursor 등 MCP 클라이언트** — 내장 stdio MCP 서버가 `refine_prompt(raw, target_model, concise)` 도구 제공:
+**Cursor 등 MCP 클라이언트** — 내장 stdio MCP 서버가 `refine_prompt(raw, target_model, concise)`와 `usage_stats`(로컬 기록 요약, LLM 호출 없음) 도구 제공:
 
 ```jsonc
 // ~/.cursor/mcp.json
 { "mcpServers": { "prompt-tailor": { "command": "prompt-tailor-mcp" } } }
 ```
+
+```toml
+# Codex CLI — ~/.codex/config.toml
+[mcp_servers.prompt-tailor]
+command = "prompt-tailor-mcp"
+```
+
+> **GUI 앱은 셸 PATH를 못 볼 수 있습니다.** command not found가 나오면 `which prompt-tailor-mcp`가 알려주는 절대 경로를 `command`에 쓰거나, `python3` + `args: ["-m", "prompt_tailor.mcp_server"]`를 사용하세요.
+
+재작성 자체는 항상 `claude` CLI를 통해 실행되므로, 어떤 클라이언트에서 쓰든 그 기기에 claude CLI 설치·로그인이 필요합니다. 재작성 대상은 Claude 모델이며, 타 모델 프로필은 제공(검증)하지 않습니다.
 
 ## 같은 입력, 모델별 변환 차이 (실제 출력)
 

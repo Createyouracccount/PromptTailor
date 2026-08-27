@@ -111,6 +111,7 @@ Every claim is backed by ledgered experiments (blind pairwise LLM judging; [LOOP
 - **Prompt quality** (golden set of 20 *vague* requests): 20/20 judged better than the original (clarity 5.0, fidelity 4.8, actionability 5.0) — [EVAL.md](EVAL.md)
 - Model profiles produce structurally different rewrites: 5/5; intent routing beat profile-only meta 4–1–1
 - **Task outcome pilot (n=3): the raw prompt won 3–0.** On *already-clear, self-contained* codegen tasks run headless, rewriting hurt: it inflated scope, its investigation directives stalled a run, and its verification demands made the executor fabricate test results — [eval/ab_task_outcome_results.json](eval/ab_task_outcome_results.json)
+- **Vague-task outcome A/B (n=10, 8 valid): raw 4 — rewritten 4.** Even on vague requests — the territory where this tool claims benefit — single-turn headless execution showed no outcome-level advantage. Rewrites won when they turned vagueness into a reasonable default implementation; they lost when their investigation directives made the executor ask questions instead of producing anything — [eval/ab_vague_outcome_results.json](eval/ab_vague_outcome_results.json)
 
 **What this means**: the measured benefit is on vague, underspecified requests — the golden set's territory. Already-clear requests should be left alone, so since v0.2.0 the rewriter runs a **clarity gate** first: if your request is already specific it returns it untouched (`action: keep`; the hook then injects nothing). Gate accuracy on a balanced 40-prompt benchmark, measured over **3 repeated runs from a neutral cwd**: **90–95%** — vague recall 59/60 (misses almost never in the harmful direction), clear recall 16–18/20. An earlier single-run figure of 98% did not reproduce and has been retired. Dataset, runner, per-run results, and the stubborn borderline cases are documented in [BENCHMARK.md](BENCHMARK.md).
 
@@ -127,7 +128,7 @@ Because there is no telemetry, improvement runs on what you choose to share: if 
 
 ## What we do NOT guarantee
 
-- **Higher task success is not proven.** Prompt-quality wins are judge-based; the only outcome data so far is the 3-task pilot above, which the raw prompt won.
+- **Higher task success is not proven — including on vague requests.** Prompt-quality wins are judge-based; the outcome data so far is the 3-task pilot (raw won 3–0) and the 10-task vague A/B (4–4 draw). Both ran headless single-turn, which structurally penalizes rewrites that ask good clarifying questions — interactive use may differ, but we have not measured that.
 - The rewriter occasionally adds specifics without an `[assumption]` tag (fidelity 4.8, not 5.0), and can misclassify intent.
 - All experiments are small-n, single-LLM-judge, and were run in this repo's environment.
 

@@ -49,6 +49,7 @@ python3 bench/run_gate_bench.py --workers 5
 | 메타 언어 한/영 A/B | `eval/ab_meta_language.py` | 영어 우세 근거 없음 → 한국어 유지 (위치 편향 주의: R23) |
 | intent 라우팅 v1/v2 A/B | `eval/ab_routing.py` | v2 4승 1패 1무 |
 | 작업 결과 파일럿 (명확 3건) | `eval/ab_task_outcome.py` | **원문 3승 : 재작성 0승** (부정적 결과 — 게이트의 근거) |
+| 작업 결과 A/B (모호 10건, 2026-08-28) | `eval/ab_vague_outcome.py` | **원문 4 : 재작성 4** (유효 n=8, headless 단일 턴) — 모호 과제에서도 결과 우위 미입증. 조사 지시가 headless에서 되묻기만 유발하는 실패 모드 재확인 |
 | 토큰·비용 실측 | `eval/measure_cost.py` | 재작성 1회 ≈$0.03 · 훅 주입 +527토큰 |
 
 ## 관련 데이터셋·연구 (조사 결과, 2026-08-16)

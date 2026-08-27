@@ -61,6 +61,8 @@ prompt-tailor "rough request" --concise          # faster, condensed meta-prompt
 
 **Hook auto mode (opt-in)** — rewrite every prompt automatically via a `UserPromptSubmit` hook. Run `bash claude-code/install.sh` for the settings snippet. Escape hatch: include `#raw` in a prompt to pass it through untouched. Prompts under 6 tokens or over 800 chars are skipped; if a rewrite doesn't finish within 28s it fails open (your original prompt goes through).
 
+**Optional direct-API path (opt-in)** — by default every rewrite runs through `claude -p` (login only, no key, uses your subscription quota). If you have an `ANTHROPIC_API_KEY`, you can bypass the CLI startup overhead: `pip install 'prompt-tailor[api]'`, then set `PROMPT_TAILOR_USE_API=1`. Off unless both are set, so nobody is surprise-billed. We have not yet measured its latency, so no speed claim here; CLI-side flag experiments showed no improvement (median ~15s stands — [runs/MEASUREMENT_LOG.md](runs/MEASUREMENT_LOG.md)).
+
 **Cursor / any MCP client** — a built-in stdio MCP server exposes `refine_prompt(raw, target_model, concise)` and `usage_stats` (your local record summary, no LLM call):
 
 ```jsonc

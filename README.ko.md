@@ -39,6 +39,8 @@ prompt-tailor "요청" --concise                       # 축약 메타프롬프�
 
 **훅 자동 모드 (옵트인)** — 모든 프롬프트를 자동 재작성. `bash claude-code/install.sh`가 출력하는 settings 스니펫 참조. `#raw` 태그로 건별 우회, 6토큰 미만·800자 초과는 자동 무개입, 28초 내 미완료 시 원문 그대로 통과(fail-open).
 
+**직접 API 경로 (옵트인)** — 기본은 `claude -p` 경유(로그인만 필요, 구독 쿼터 소모). `ANTHROPIC_API_KEY`가 있다면 CLI 기동 오버헤드를 우회할 수 있습니다: `pip install 'prompt-tailor[api]'` 후 `PROMPT_TAILOR_USE_API=1`. 두 조건이 모두 설정될 때만 켜지므로 의도치 않은 과금은 없습니다. 이 경로의 지연은 아직 미실측이라 속도 주장은 하지 않습니다. CLI 플래그 실험은 개선 없음으로 판명(중앙값 ~15s 유지 — [runs/MEASUREMENT_LOG.md](runs/MEASUREMENT_LOG.md)).
+
 **Cursor 등 MCP 클라이언트** — 내장 stdio MCP 서버가 `refine_prompt(raw, target_model, concise)`와 `usage_stats`(로컬 기록 요약, LLM 호출 없음) 도구 제공:
 
 ```jsonc

@@ -55,7 +55,9 @@ META_PROMPT_TEMPLATE = """\
 
 0단계 — 재작성 필요 판정: RAW가 이미 대상·목표·결과물이 구체적이어서 그대로 실행해도 되는 요청이면
 (예: "X 파일의 Y를 Z로 바꿔줘", "퀵정렬 함수 짜줘"), action을 "keep"으로 하고 rewritten_prompt에 RAW를
-그대로 넣어라. 재작성은 모호하거나 범위·완료 기준이 불명확한 요청에만 한다 — 명확한 요청을 부풀리는 것은 실패다.
+그대로 넣어라. 길이가 아니라 완결성으로 판정하라: 단일 함수·스크립트·쿼리 작성처럼 대상 동작이 완결
+지정된 요청은 짧아도 keep이다. 재작성은 모호하거나 범위·완료 기준이 불명확한 요청에만 한다 —
+명확한 요청을 부풀리는 것은 실패다.
 
 재작성하는 경우: RAW의 intent를 분류하고(fix|build|research|debug|refactor|docs|general), 해당 유형 규칙을 적용하라:
 {intent_rules}
@@ -117,7 +119,7 @@ def load_profile(stem: str) -> str:
 # lean meta stayed under (LOOP_LOG R22).
 CONDENSED_LEAN_TEMPLATE = """\
 당신은 프롬프트 재작성기다. RAW를 Claude {target_model}에 맞게 재작성하라.
-RAW가 이미 대상·목표·결과물이 구체적이면 action="keep", rewritten_prompt=RAW 그대로 — 명확한 요청을 부풀리지 마라. 모호할 때만 action="rewrite".
+RAW가 이미 대상·목표·결과물이 구체적이면 action="keep", rewritten_prompt=RAW 그대로 — 명확한 요청을 부풀리지 마라. 길이가 아니라 완결성으로 판정: 단일 함수·스크립트·쿼리처럼 대상 동작이 완결 지정된 요청은 짧아도 keep. 모호할 때만 action="rewrite".
 {target_model} 규칙: {condensed_profile}
 공통: RAW에 없는 사실을 지어내지 말 것 — 모르면 조사 지시로 바꾸고, 추가 세부에는 [가정: 이유] 필수. RAW 언어 유지. rewritten_prompt는 700자 이내.
 <RAW>
@@ -128,7 +130,7 @@ JSON만 출력: {{"action": "rewrite|keep", "intent": "fix|build|research|debug|
 
 CONDENSED_TEMPLATE = """\
 당신은 프롬프트 재작성기다. RAW를 Claude {target_model}에 맞게 재작성하라.
-0단계: RAW가 이미 대상·목표·결과물이 구체적이면 action="keep", rewritten_prompt=RAW 그대로 — 명확한 요청을 부풀리지 마라. 모호할 때만 action="rewrite".
+0단계: RAW가 이미 대상·목표·결과물이 구체적이면 action="keep", rewritten_prompt=RAW 그대로 — 명확한 요청을 부풀리지 마라. 길이가 아니라 완결성으로 판정: 단일 함수·스크립트·쿼리처럼 대상 동작이 완결 지정된 요청은 짧아도 keep. 모호할 때만 action="rewrite".
 재작성 시 intent를 분류하고 해당 유형 규칙을 적용하라:
 {intent_rules}
 {target_model} 규칙: {condensed_profile}

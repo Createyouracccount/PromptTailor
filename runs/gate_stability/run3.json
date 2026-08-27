@@ -1,0 +1,362 @@
+[
+  {
+    "id": "v01",
+    "raw": "로그인 버그 고쳐줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "로그인 기능의 버그를 고친다. 먼저 다음을 파악한 뒤 진행하라: 버그의 증상은 무엇인가(로그인 실패, 오류 메시지, 무한 로딩 등), 재현하는 구체적인 방법(어떤 입력값, 어떤 환경), 현재 동작과 기대하는 동작의 차이점이 무엇인가. 파악 후 최소한의 변경으로 버그를 고치고, 로그인 성공 및 관련 기능들의 정상 작동을 확인하라. UI 개선이나 새 기능 추가는 범위 밖이다.",
+    "correct": true
+  },
+  {
+    "id": "v02",
+    "raw": "이거 왜 안돼?",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "무언가가 작동하지 않는 상황인데, 구체적으로 무엇이 어떻게 작동하지 않는지 파악한 뒤 진행하자. 현재 코드나 시스템의 상태를 먼저 설명하고, 수행하려던 작업이 정확히 무엇(예: 코드 실행, 빌드, API 호출)인지 명시한다. 그 다음 정확한 에러 메시지나 콘솔 출력, 또는 예상과 다른 실제 동작을 함께 전달하고, 기대했던 결과가 어떤 것인지도 설명해야 한다. 이 정보들이 있으면 문제의 원인을 찾고 최소한의 수정으로 해결하는 방향을 결정할 수 있다.",
+    "correct": true
+  },
+  {
+    "id": "v03",
+    "raw": "리팩토링 좀 해줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "리팩토링의 대상 파일이나 함수, 그리고 목적(가독성, 중복 제거, 성능 등)을 구체적으로 지정해주세요. 리팩토링 범위와 완료 기준을 명확히 한 후 진행하면 더 정확합니다. 리팩토링 후 기존 동작은 변하지 않아야 하며 테스트로 검증합니다. 범위 확장이나 새 기능 추가는 하지 않습니다.",
+    "correct": true
+  },
+  {
+    "id": "v04",
+    "raw": "테스트 추가해줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "어떤 코드에 어떤 테스트를 추가할지 먼저 파악한 뒤 진행하라. 대상 모듈이나 함수, 다뤄야 할 주요 시나리오(정상 동작과 엣지 케이스), 현재 프로젝트의 테스트 프레임워크와 기존 테스트 스타일을 확인하고, 일관성 있게 테스트를 추가. 테스트 범위는 명시된 대상에만 한정하고, 범위 밖 코드는 건드리지 않을 것. 추가 후 테스트를 실행해서 모두 통과하는지 확인.",
+    "correct": true
+  },
+  {
+    "id": "v05",
+    "raw": "성능 개선해줘 느려",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "성능이 느린 부분을 개선해야 합니다. 먼저 어느 부분이 느린지(예: 페이지 로딩, 특정 기능, 데이터 처리) 구체적으로 파악하고, 현재 성능 수치와 목표 성능을 확인한 뒤 진행합니다. 느린 현상을 재현하는 방법과 현재 코드에서 병목 지점이 어디인지 조사한 후, 최소한의 수정 범위로 개선합니다. 범위 밖의 리팩토링이나 추가 기능은 다루지 않습니다. 수정 후에는 성능이 실제로 개선되었는지 측정으로 검증합니다.",
+    "correct": true
+  },
+  {
+    "id": "v06",
+    "raw": "readme 써줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "현재 프로젝트의 README를 마크다운으로 작성하세요. 먼저 프로젝트의 주요 목적과 기능이 무엇인지, 대상이 개발자인지 일반 사용자인지 파악한 뒤 진행하세요. 기존 README가 있다면 기존 구조를 유지하되 개선할 부분을 보완합니다. 포함할 섹션은 프로젝트 개요, 설치 방법, 기본 사용 예시, 기여 방법 등이며, 프로젝트의 특성에 따라 불필요한 섹션은 제외해도 됩니다. 외부 참고 자료나 가정한 정보는 명시하지 마세요.",
+    "correct": true
+  },
+  {
+    "id": "v07",
+    "raw": "이 코드 설명해줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "어떤 코드를 설명해줄지 먼저 파악한 뒤 진행하라. 설명 대상을 구체적으로 지정하라 — 특정 파일, 함수, 모듈, 또는 코드 블록 범위. 설명의 초점을 명시하라: 전체 동작 흐름, 특정 함수의 역할, 구현 방식의 이유, 또는 데이터 흐름. 설명 깊이도 정하라 — 간단한 요약인지, 상세 분석인지. 사용자의 배경 지식이 무엇인지 알려주면 설명 수준을 맞출 수 있다 [가정: 맥락 없이는 과도하게 기본적이거나 너무 깊을 수 있음].",
+    "correct": true
+  },
+  {
+    "id": "v08",
+    "raw": "배포 자동화 하고싶어",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "배포 자동화를 구축하려고 한다. 먼저 현재 배포 방식(수동 단계, 배포 환경, 사용 중인 도구)과 자동화했을 때 얻으려는 이득(배포 빈도, 휴먼 에러 감소, 시간 절감 등)을 파악한 뒤 진행하라. MVP 범위를 정의할 때는 현재 CI/CD 인프라가 무엇인지(GitHub Actions, Jenkins, 없음 등), 배포 대상이 클라우드인지 온프레미스인지, 롤백 전략이 필요한지 등을 고려하라. 자동화 대상의 우선순위(빌드 → 테스트 → 스테이징 배포 → 프로덕션)를 정하고, 무엇은 자동화 범위에서 제외할지(예: 프로덕션 승인 단계는 수동 유지)를 명시하라. 자동화 완료 기준은 배포 파이프라인이 동작하고, 기존 배포 대비 시간이나 휴먼 에러가 줄어드는 것으로 검증하라. 코드 수정은 하지 않으며, 배포 스크립트나 설정 파일(Dockerfile, 배포 설정 등)이 필요한지는 이 정보 수집 후 결정한다.",
+    "correct": true
+  },
+  {
+    "id": "v09",
+    "raw": "달력 기능 만들어줘 그리고 알림도 되면 좋겠어 아 그리고 다크모드도",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "달력 기능을 만들려 한다. 먼저 달력의 기본 범위를 정하자: 월별 뷰인지, 날짜 선택·이벤트 입력이 필요한지. 알림은 어떤 형태(푸시/이메일/인앱)인지, 다크모드는 전체 UI에 적용하는지도 확인하자.\n\nMVP는 월별 달력 뷰와 날짜 선택, 다크/라이트 모드 토글로만 범위를 정하고, 이벤트 저장이나 알림 기능은 명시하지 않는 한 제외한다. 완료 기준은 현재·이전·다음 달 탐색 가능, 오늘 날짜 강조, 라이트·다크 모드 모두에서 읽기 쉬운 상태다.",
+    "correct": true
+  },
+  {
+    "id": "v10",
+    "raw": "코드리뷰 해줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "코드리뷰를 수행하기 위해 먼저 검토 대상을 명확히 하라. 현재 작업 디렉터리의 어떤 파일이나 변경사항을 검토하기를 원하는지, 그리고 검토의 초점이 무엇인지 지정하라(버그, 성능, 코드 스타일, 보안, 아니면 종합적 검토인지). 검토 결과는 개선할 점과 현재 상태의 문제점을 명확히 구분하여 제시하고, 범위를 벗어난 항목은 다루지 말 것.",
+    "correct": true
+  },
+  {
+    "id": "v11",
+    "raw": "에러남 TypeError: cannot read properties of undefined",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "TypeError: cannot read properties of undefined 에러를 해결해야 한다.\n\n먼저 다음을 파악한 뒤 진행하라: 어느 파일과 줄 번호에서 에러가 발생하는지, 어떤 작업을 했을 때 나는지, 현재 어떤 동작을 기대했는지. 에러 스택 트레이스와 관련 코드를 제시하면 더 정확하다.\n\n에러의 근본 원인은 변수나 객체 속성이 undefined 상태에서 접근되었을 것이다. 최소 수정 범위는 해당 변수가 정의되는 부분부터 접근하는 부분까지로 한정하고, null/undefined 체크 추가 또는 초기화 로직 수정으로 해결하라. 수정 후에는 같은 동작을 반복해서 에러가 사라졌는지, 관련 기능이 의도대로 동작하는지 확인하면 된다.",
+    "correct": true
+  },
+  {
+    "id": "v12",
+    "raw": "API 만들어줘 유저 관련해서",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "유저 관련 API 개발의 목표와 범위를 먼저 명확히 하라. 현재 프로젝트 구조, 필요한 유저 기능(회원가입, 조회 등 구체 엔드포인트), API 형식(REST, GraphQL), 데이터베이스 스키마를 파악한 뒤 진행하라.\n\nMVP는 유저 생성과 조회만 포함하고, 인증·권한 관리·추가 유저 정보 필드는 제외하라. 구현한 엔드포인트가 정상 입출력과 기본 에러 케이스를 처리할 때 완료로 본다.",
+    "correct": true
+  },
+  {
+    "id": "v13",
+    "raw": "보안 점검 한번 해줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "현재 코드베이스의 보안 점검을 수행하라. 먼저 repository 특성(사용 언어, 프레임워크, 주요 기능)을 파악한 뒤, 인젝션, 권한 관리, 암호화, 입력 검증, 민감 정보 노출 등 일반적인 보안 취약점을 검토하라. 발견한 문제마다 심각도와 구체적인 수정 방안을 명시하되, 실제 수정 가능성까지 평가하라. 범위 외: 성능이나 코드 스타일 개선.",
+    "correct": true
+  },
+  {
+    "id": "v14",
+    "raw": "이 파이썬 코드 타입스크립트로 바꿔줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "파이썬 코드를 타입스크립트로 변환해야 합니다. 먼저 변환할 파이썬 코드를 구체적으로 제시하고, 타겟 환경(Node.js 또는 브라우저)과 변환 목적(기존 프로젝트 통합, 특정 플랫폼 지원 등)을 명확히 한 뒤 진행하세요. 변환 후에는 원본 파이썬 코드의 입출력 동작과 타입스크립트 버전이 동일하게 작동하는지 확인하는 방식으로 검증하되, 코드 구조 재설계나 성능 최적화는 범위 밖입니다.",
+    "correct": true
+  },
+  {
+    "id": "v15",
+    "raw": "주석 좀 달아줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "어느 코드 부분에 주석을 추가해야 하는지 먼저 파악한 뒤 진행하라. 주석은 비명백한 로직이나 의도를 설명하는 데 집중하고, 변수명이나 함수명으로 충분히 알 수 있는 부분의 재설명은 피하라. 함수/클래스 수준의 문서 주석과 복잡한 구간의 인라인 주석을 추가한다. 코드 자체는 수정하지 않으며 주석 추가만 수행한다.",
+    "correct": true
+  },
+  {
+    "id": "v16",
+    "raw": "쓸데없는 코드 지워줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "코드를 정리하기 전에 파악할 사항을 확인한 뒤 진행하라. 대상 범위가 무엇인지 (전체 프로젝트·특정 모듈·파일), 제거 기준이 뭔지 (미사용 변수·함수·중복·레거시 코드 등), 제거 후 기존 동작이 유지되는지 검증할 방법은 무엇인지 (테스트 실행·수동 확인). 범위 확장 금지 — 명확하게 제거할 코드만 다루고, 리팩토링이나 개선 사항은 하지 않는다. [가정: 구체적 범위와 기준 없이는 어떤 코드를 제거할지 판단할 수 없음]",
+    "correct": true
+  },
+  {
+    "id": "v17",
+    "raw": "검색기능 추가하고 아까 그 버그도 고쳐줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "먼저 이전 대화에서 언급한 버그가 무엇인지, 재현 방법과 기대 동작을 파악한 뒤 수정하라. 수정 후 검증 방법도 함께 정의하라. 검색기능 추가 시에는 검색 대상 범위(어떤 필드/데이터를 검색할지), 검색 결과 표시 방식을 먼저 명시하고, 필터나 정렬 옵션은 범위 밖으로 제외하라. MVP 범위를 한정하고 완료 기준을 정의하라.",
+    "correct": true
+  },
+  {
+    "id": "v18",
+    "raw": "챗봇 만들어줘",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "사용할 기술 스택(프로그래밍 언어, 프레임워크)과 배포 환경(웹 인터페이스, CLI, Slack 등)을 먼저 파악한 뒤 진행하라. 챗봇의 핵심 목적과 주요 기능을 정의하되, MVP 범위는 사용자 입력을 받아 응답을 반환하는 기본 대화 루프로 한정한다. 자연어 처리 고도화, 외부 API 연동, 데이터베이스 저장은 범위 밖이다. 완료 기준은 정의된 환경에서 동작하는 챗봇이며, 기본 입출력 테스트로 검증한다.",
+    "correct": true
+  },
+  {
+    "id": "v19",
+    "raw": "DB를 postgres로 바꾸고 싶은데 어떻게 생각해",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "현재 데이터베이스를 PostgreSQL로 변경하려고 하는데, 이것이 좋은 선택인지 평가해달라. 기술적 측면(호환성, 성능, 학습곡선), 운영 측면(비용, 관리 복잡도), 마이그레이션 비용을 종합적으로 고려한 의견을 원한다. 구체적인 마이그레이션 계획 수립은 범위 밖이다.",
+    "correct": true
+  },
+  {
+    "id": "v20",
+    "raw": "커밋하고 푸시해줘 아 그전에 lint도",
+    "label": "rewrite",
+    "source": "golden-set",
+    "action": "rewrite",
+    "rewritten_prompt": "현재 변경사항을 원격에 푸시해야 한다. 목표는 lint 실행으로 자동 수정한 후 커밋하고 푸시하는 것이다. 커밋 메시지는 변경사항을 간결하게 설명하는 형태로 작성하고, 먼저 git status로 대상 파일을 확인하고 현재 브랜치가 올바른지 파악한 뒤 진행하라.",
+    "correct": true
+  },
+  {
+    "id": "c01",
+    "raw": "파이썬으로 퀵정렬 함수 하나 짜줘 간단 설명도",
+    "label": "keep",
+    "source": "task-outcome-pilot",
+    "action": "keep",
+    "rewritten_prompt": "파이썬으로 퀵정렬 함수 하나 짜줘 간단 설명도",
+    "correct": true
+  },
+  {
+    "id": "c02",
+    "raw": "CSV 파일에서 중복 행 제거하는 스크립트 만들어줘",
+    "label": "keep",
+    "source": "task-outcome-pilot",
+    "action": "rewrite",
+    "rewritten_prompt": "CSV 파일에서 중복 행을 제거하는 스크립트를 작성하려고 한다. 먼저 다음을 파악한 뒤 진행하자: (1) 입력 CSV 파일의 경로와 인코딩, (2) 중복을 판단할 기준(모든 열을 비교할지, 특정 열만 비교할지), (3) 원본 파일을 수정할지 또는 새로운 파일을 생성할지, (4) 사용할 언어(Python, Bash, Node 등). 완료 기준은 스크립트가 실제 CSV 파일에서 정확히 중복 행을 제거하고 결과를 지정된 형식으로 출력하는 것이다. 범위 밖: 행 정렬, 필터링, 데이터 검증 같은 추가 처리는 하지 않는다.",
+    "correct": false
+  },
+  {
+    "id": "c03",
+    "raw": "이메일 형식 검증하는 함수 자바스크립트로 만들어줘",
+    "label": "keep",
+    "source": "task-outcome-pilot",
+    "action": "rewrite",
+    "rewritten_prompt": "이메일 형식을 검증하는 자바스크립트 함수를 작성하세요. 먼저 용도를 파악한 뒤 진행하세요. 프론트엔드 입력 검증이라면 정규식 기반의 간단한 패턴으로 충분하고, 백엔드 검증이라면 더 엄격한 기준이 필요할 수 있습니다. 함수는 이메일 문자열을 입력받아 boolean을 반환하거나, 유효 여부와 오류 메시지를 함께 반환할 수 있습니다. 사용 맥락에 맞는 형식을 선택하세요. 목표는 일반적인 이메일 형식(예: user@domain.com)을 판별하는 것이며, SMTP 검증이나 실제 발송 테스트는 범위 밖입니다. 정상 케이스(user@example.com)와 오류 케이스(invalid.email, @domain, user@)를 테스트하여 검증하세요.",
+    "correct": false
+  },
+  {
+    "id": "c04",
+    "raw": "src/utils/date.py의 format_date 함수에 ISO 8601 출력 옵션 추가해줘. 기존 호출부는 그대로 동작해야 해",
+    "label": "keep",
+    "source": "authored",
+    "action": "rewrite",
+    "rewritten_prompt": "src/utils/date.py의 format_date 함수에 ISO 8601 형식 출력을 지원하도록 개선하되, 기존 호출부는 변경 없이 그대로 동작해야 한다. 먼저 format_date의 현재 구현과 호출 지점을 파악한 뒤, 선택적 파라미터를 추가해 ISO 8601 여부를 제어하도록 한다. 기본값은 현재 동작을 유지하도록 설정하여 하위 호환성을 보장한다. 구현 후 기존 호출부가 변경 없이 동작하는지, 그리고 새 옵션이 제대로 작동하는지 확인한다.",
+    "correct": false
+  },
+  {
+    "id": "c05",
+    "raw": "README.md의 설치 섹션에 Python 3.10 이상 필요하다는 문장 한 줄 추가해줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "README.md의 설치 섹션에 Python 3.10 이상 필요하다는 문장 한 줄 추가해줘",
+    "correct": true
+  },
+  {
+    "id": "c06",
+    "raw": "tests/test_auth.py 실행해서 실패하는 테스트 있으면 알려만 줘. 수정은 하지 마",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "tests/test_auth.py 실행해서 실패하는 테스트 있으면 알려만 줘. 수정은 하지 마",
+    "correct": true
+  },
+  {
+    "id": "c07",
+    "raw": "requirements.txt의 pandas 버전을 2.2로 올리고 설치 확인해줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "requirements.txt의 pandas 버전을 2.2로 올리고 설치 확인해줘",
+    "correct": true
+  },
+  {
+    "id": "c08",
+    "raw": "login() 함수에서 비밀번호를 평문으로 로깅하는 줄 지워줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "login() 함수에서 비밀번호를 평문으로 로깅하는 줄 지워줘",
+    "correct": true
+  },
+  {
+    "id": "c09",
+    "raw": "이 폴더의 .png 파일 개수 세서 알려줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "이 폴더의 .png 파일 개수 세서 알려줘",
+    "correct": true
+  },
+  {
+    "id": "c10",
+    "raw": "git diff 보여줘. 설명은 필요 없어",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "git diff 보여줘. 설명은 필요 없어",
+    "correct": true
+  },
+  {
+    "id": "c11",
+    "raw": "Dockerfile의 베이스 이미지를 python:3.12-slim으로 바꿔줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "Dockerfile의 베이스 이미지를 python:3.12-slim으로 바꿔줘",
+    "correct": true
+  },
+  {
+    "id": "c12",
+    "raw": "fibonacci 함수를 재귀에서 반복문으로 바꿔줘. 시그니처는 유지",
+    "label": "keep",
+    "source": "authored",
+    "action": "rewrite",
+    "rewritten_prompt": "fibonacci 함수를 재귀에서 반복문으로 변경하되, 함수 시그니처는 유지해야 한다. 먼저 현재 fibonacci 함수의 위치(파일 경로)와 구현 언어를 파악한 뒤 진행하라. 변경 후에는 기존 테스트나 호출 사이트가 그대로 동작하는지 확인한다. 범위 밖의 추가 최적화나 함수 이름 변경은 하지 않는다.",
+    "correct": false
+  },
+  {
+    "id": "c13",
+    "raw": "config.json에서 timeout 값을 30에서 60으로 바꿔줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "config.json에서 timeout 값을 30에서 60으로 바꿔줘",
+    "correct": true
+  },
+  {
+    "id": "c14",
+    "raw": "utils.py의 함수들에 타입 힌트만 추가해줘. 로직 변경 금지",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "utils.py의 함수들에 타입 힌트만 추가해줘. 로직 변경 금지",
+    "correct": true
+  },
+  {
+    "id": "c15",
+    "raw": "Write a bash one-liner that finds files larger than 100MB under the current directory",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "Write a bash one-liner that finds files larger than 100MB under the current directory",
+    "correct": true
+  },
+  {
+    "id": "c16",
+    "raw": "Rename the variable tmp to buffer in parser.py, nothing else",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "Rename the variable tmp to buffer in parser.py, nothing else",
+    "correct": true
+  },
+  {
+    "id": "c17",
+    "raw": "정렬된 배열에서 이진 탐색하는 함수 자바로 짜줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "정렬된 배열에서 이진 탐색하는 함수 자바로 짜줘",
+    "correct": true
+  },
+  {
+    "id": "c18",
+    "raw": "현재 브랜치 이름 알려줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "현재 브랜치 이름 알려줘",
+    "correct": true
+  },
+  {
+    "id": "c19",
+    "raw": "package.json의 version을 1.2.0으로 올려줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "package.json의 version을 1.2.0으로 올려줘",
+    "correct": true
+  },
+  {
+    "id": "c20",
+    "raw": "users 테이블에서 최근 7일 가입자 수 세는 SQL 쿼리 짜줘",
+    "label": "keep",
+    "source": "authored",
+    "action": "keep",
+    "rewritten_prompt": "users 테이블에서 최근 7일 가입자 수 세는 SQL 쿼리 짜줘",
+    "correct": true
+  }
+]

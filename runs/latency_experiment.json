@@ -1,0 +1,89 @@
+{
+  "raw": "로그인 버그 고쳐줘",
+  "target": "fable-5",
+  "rewriter": "claude-haiku-4-5",
+  "min_system": "You are a prompt rewriting engine. Output only the requested JSON.",
+  "variants": {
+    "A_baseline": {
+      "runs": [
+        {
+          "seconds": 19.7,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 409
+        },
+        {
+          "seconds": 15.5,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 418
+        },
+        {
+          "seconds": 11.6,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 404
+        }
+      ],
+      "n_ok": 3,
+      "median_s": 15.5
+    },
+    "B_minsys": {
+      "runs": [
+        {
+          "seconds": 17.9,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 372
+        },
+        {
+          "seconds": 19.3,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 420
+        },
+        {
+          "seconds": 19.2,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 428
+        }
+      ],
+      "n_ok": 3,
+      "median_s": 19.2
+    },
+    "C_minsys_nosettings": {
+      "runs": [
+        {
+          "seconds": 12.2,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 402
+        },
+        {
+          "seconds": 19.6,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 384
+        },
+        {
+          "seconds": 14.4,
+          "rc": 0,
+          "parsed": true,
+          "action": "rewrite",
+          "output_chars": 447
+        }
+      ],
+      "n_ok": 3,
+      "median_s": 14.4
+    }
+  }
+}

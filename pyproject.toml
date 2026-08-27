@@ -1,6 +1,6 @@
 [project]
 name = "prompt-tailor"
-version = "0.2.1"
+version = "0.2.2"
 description = "Model-aware prompt refinement tool for Claude Code users"
 readme = "README.md"
 license = {file = "LICENSE"}

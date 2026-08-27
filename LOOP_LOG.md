@@ -5,6 +5,15 @@
 
 ---
 
+## 2026-08-28 · R38 (다중 클라이언트 지원 라운드 — MCP usage_stats·PATH 함정 문서화, v0.2.2)
+
+- **배경(사용자)**: "Cursor·Codex 등 여러 곳에서 pm이 동작해야" — 발굴: ① GUI 앱(Cursor 등)은 셸 PATH 미상속으로 `prompt-tailor-mcp` 못 찾을 수 있음(README 무안내) ② MCP 클라이언트에서 사용 기록 확인 수단 없음 ③ 주기 점검용 기간 필터 없음
+- **MCP `usage_stats` 도구**: refine_prompt 옆에 추가 — 로컬 usage.jsonl 요약을 LLM 호출 없이 반환. **실 stdio 왕복 E2E 실측**: 이 기기 실기록 4건(cli 2·pm 2, fable/opus 각 2) 정상 반환
+- **`stats --last N`**: 최근 N일만 집계(ts 사전순 비교). 테스트로 2020년 이벤트 필터링 확인
+- **README 영/한**: Codex CLI(config.toml) 등록 예시, GUI PATH 함정(절대 경로 or `python3 -m prompt_tailor.mcp_server`), 경계 명시(재작성은 항상 claude CLI 경유·타 모델 프로필 미제공). Hermes류 유사 도구 존재는 대화로 인정 — 차별점은 모델별 맞춤+명확도 게이트+증거 공개로 좁게 유지
+- **실측**: 오프라인 테스트 44/44 OK. v0.2.2 (패키지 코드 변경이라 PyPI 재배포 필요)
+- **다음 인수 지점**: Cursor 실기기에서 refine_prompt/usage_stats 호출 → usage.jsonl `source: mcp` 확인(사용자), pm 실사용 기록 축적
+
 ## 2026-08-20 · R37 (실사용 발견 2건 — 빈 프롬프트 usage 안내, 맥락 규칙 첫 실증)
 
 - **실사용(VSCode, 사용자)**: 자동완성에서 `/prompt-tailor:pm`을 Enter로 선택하면 인자 없이 즉시 제출 → `{"error": "빈 프롬프트"}` 2회. 수정: 백엔드가 usage 한 줄 포함 반환 + pm.md 지시 5번 보강(원문도 비면 usage만 안내). 올바른 사용법(명령 뒤 Space → 요청 입력)은 대화로 안내

@@ -33,8 +33,12 @@ def stats_main(argv: list[str]) -> int:
         "--share", action="store_true",
         help="GitHub 이슈에 붙여넣기 좋은 숫자-전용 마크다운 블록 출력",
     )
+    parser.add_argument(
+        "--last", type=int, metavar="N", default=None,
+        help="최근 N일 기록만 집계 (기본: 전체)",
+    )
     args = parser.parse_args(argv)
-    summary = summarize(load_events())
+    summary = summarize(load_events(last_days=args.last))
     if args.json:
         print(json.dumps(summary, ensure_ascii=False, indent=2))
     else:

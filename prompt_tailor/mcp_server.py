@@ -17,9 +17,19 @@ import time
 
 from . import __version__
 from .engine import ClaudeCLINotFoundError, rewrite
-from .usage import record_event
+from .usage import load_events, record_event, summarize
 
 PROTOCOL_VERSION = "2025-06-18"
+
+STATS_TOOL_DEF = {
+    "name": "usage_stats",
+    "description": (
+        "이 기기의 prompt-tailor 로컬 사용 기록 요약을 반환한다 "
+        "(keep/rewrite 비율, 지연, 경로별 — 프롬프트 원문은 기록에 없음). "
+        "LLM 호출 없이 즉시 응답."
+    ),
+    "inputSchema": {"type": "object", "properties": {}},
+}
 
 TOOL_DEF = {
     "name": "refine_prompt",
@@ -96,12 +106,20 @@ def handle_request(req: dict) -> dict | None:
             "serverInfo": {"name": "prompt-tailor", "version": __version__},
         }
     elif method == "tools/list":
-        result = {"tools": [TOOL_DEF]}
+        result = {"tools": [TOOL_DEF, STATS_TOOL_DEF]}
     elif method == "tools/call":
-        if params.get("name") != "refine_prompt":
+        name = params.get("name")
+        if name == "refine_prompt":
+            result = _handle_tool_call(params.get("arguments") or {})
+        elif name == "usage_stats":
+            summary = summarize(load_events())
+            result = {
+                "content": [{"type": "text", "text": json.dumps(summary, ensure_ascii=False, indent=2)}],
+                "structuredContent": summary,
+            }
+        else:
             return {"jsonrpc": "2.0", "id": req_id,
-                    "error": {"code": -32602, "message": f"unknown tool: {params.get('name')}"}}
-        result = _handle_tool_call(params.get("arguments") or {})
+                    "error": {"code": -32602, "message": f"unknown tool: {name}"}}
     elif method == "ping":
         result = {}
     else:

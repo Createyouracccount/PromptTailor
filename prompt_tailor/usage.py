@@ -62,10 +62,14 @@ def record_event(
         pass
 
 
-def load_events() -> list[dict]:
+def load_events(last_days: int | None = None) -> list[dict]:
     path = usage_path()
     if not path.exists():
         return []
+    cutoff = None
+    if last_days is not None:
+        # ts is "%Y-%m-%dT%H:%M:%S" — lexicographic compare works on the prefix
+        cutoff = time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(time.time() - last_days * 86400))
     events = []
     with path.open(encoding="utf-8") as f:
         for line in f:
@@ -77,6 +81,8 @@ def load_events() -> list[dict]:
             except json.JSONDecodeError:
                 continue  # tolerate a torn write
             if isinstance(ev, dict) and ev.get("action") in VALID_ACTIONS:
+                if cutoff and str(ev.get("ts", "")) < cutoff:
+                    continue
                 events.append(ev)
     return events
 

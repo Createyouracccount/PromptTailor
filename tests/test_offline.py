@@ -242,8 +242,7 @@ class TestMcpServerProtocol(unittest.TestCase):
     def test_tools_list(self):
         resp = self._req("tools/list")
         tools = resp["result"]["tools"]
-        self.assertEqual(len(tools), 1)
-        self.assertEqual(tools[0]["name"], "refine_prompt")
+        self.assertEqual([t["name"] for t in tools], ["refine_prompt", "usage_stats"])
         self.assertIn("raw", tools[0]["inputSchema"]["required"])
 
     def test_notification_returns_none(self):
@@ -340,6 +339,31 @@ class TestUsageRecords(unittest.TestCase):
         share = usage.format_stats(s, share=True)
         self.assertIn("| rewrite | 1", share)
         self.assertIn("no prompt text", share)
+
+    def test_last_days_filter(self):
+        from prompt_tailor import usage
+        usage.record_event("hook", "rewrite", target="fable-5")  # now
+        old = {"ts": "2020-01-01T00:00:00", "source": "cli", "action": "keep"}
+        with usage.usage_path().open("a", encoding="utf-8") as f:
+            f.write(json.dumps(old) + "\n")
+        self.assertEqual(len(usage.load_events()), 2)
+        recent = usage.load_events(last_days=7)
+        self.assertEqual(len(recent), 1)
+        self.assertEqual(recent[0]["action"], "rewrite")
+
+    def test_mcp_usage_stats_tool(self):
+        from prompt_tailor import mcp_server, usage
+        usage.record_event("mcp", "rewrite", target="fable-5", latency_s=12.0)
+        resp = mcp_server.handle_request(
+            {"jsonrpc": "2.0", "id": 9, "method": "tools/list"})
+        names = [t["name"] for t in resp["result"]["tools"]]
+        self.assertEqual(names, ["refine_prompt", "usage_stats"])
+        resp = mcp_server.handle_request(
+            {"jsonrpc": "2.0", "id": 10, "method": "tools/call",
+             "params": {"name": "usage_stats", "arguments": {}}})
+        summary = resp["result"]["structuredContent"]
+        self.assertEqual(summary["total"], 1)
+        self.assertEqual(summary["by_source"], {"mcp": 1})
 
     def test_cli_stats_runs(self):
         import contextlib

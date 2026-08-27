@@ -12,7 +12,14 @@
 - 환경: bench/gate_set.jsonl 40건 × 3회, target fable-5, concise, workers 4, 중립 cwd(레포 밖)에서 실행
 - 결과: (실행 중 — 완료 시 기록)
 
+## 2026-08-28 · Windows CI (R39)
+
+- 목적: "Windows 미검증" 문구의 실측 상향
+- 환경: GitHub Actions windows-latest + ubuntu-latest × py3.10/3.12, 오프라인 테스트 48건
+- 결과: **4개 잡 전부 success** (run: CI "Run offline tests on Windows in CI") — Windows에서 오프라인 테스트 48/48 통과. E2E(claude CLI 포함)는 여전히 미검증 — README 문구를 그대로 이 사실로 교체
+
 ## 2026-08-28 · 재작성 지연 (R39 속도 라운드)
 
 - 목적: 중앙값 10초 이하 달성 여부 판정. 기존 실측: 18–33s (R32), 원인 = `claude -p` 기동 오버헤드(입력 ~29.5k 토큰 중 ~99%가 CLI 시스템 프롬프트)
-- 결과: (측정 전)
+- 실험 A/B/C(eval/measure_latency.py, n=3/변형, haiku): A 현행 / B +`--system-prompt` 최소 교체 / C B+`--setting-sources ''`
+- 결과: (실행 중 — 완료 시 기록)

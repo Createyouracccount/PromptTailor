@@ -47,7 +47,7 @@ This gives you the `/pm` command with no path setup.
 pip install prompt-tailor    # installs `prompt-tailor` and `prompt-tailor-mcp`
 ```
 
-Requirements: Python 3.10+, the `claude` CLI installed and logged in (no separate API key). Verified on macOS/Linux; Windows untested.
+Requirements: Python 3.10+, the `claude` CLI installed and logged in (no separate API key). Verified in real use on macOS/Linux; on Windows the offline test suite passes in CI (py3.10/3.12), but the end-to-end path with the `claude` CLI is untested.
 
 ## Usage
 

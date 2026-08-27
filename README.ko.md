@@ -25,7 +25,7 @@ Claude Fable 5 / Opus 5 / Sonnet 5 / Haiku는 잘 반응하는 프롬프트 스�
 pip install prompt-tailor    # prompt-tailor, prompt-tailor-mcp 명령 설치
 ```
 
-요구사항: Python 3.10+, `claude` CLI 설치·로그인 (별도 API 키 불필요). macOS/Linux 검증됨, Windows 미검증.
+요구사항: Python 3.10+, `claude` CLI 설치·로그인 (별도 API 키 불필요). macOS/Linux 실사용 검증됨. Windows는 오프라인 테스트가 CI(py3.10/3.12)에서 통과하나, `claude` CLI를 포함한 E2E 경로는 미검증.
 
 ## 사용법
 

@@ -7,3 +7,4 @@ runs/pm_command.log
 dist/
 build/
 *.egg-info/
+docs/*.png

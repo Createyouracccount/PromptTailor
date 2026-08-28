@@ -4,6 +4,10 @@
 
 [한국어 README](README.ko.md)
 
+![PromptTailor demo: a vague request gets rewritten; an already-clear one is returned untouched](docs/demo.gif)
+
+*Real calls — only the ~20s waits are cut. Re-render with `vhs docs/demo.tape`.*
+
 ## Why
 
 Claude Fable 5, Opus 5, Sonnet 5, and Haiku respond best to *different* prompt styles — Fable wants goals and constraints in prose (no step lists), Opus over-verifies if you tell it to double-check, Haiku wants small numbered steps. PromptTailor keeps these differences as data ([model profiles](prompt_tailor/profiles/)), detects which model you're running, and rewrites your rough request to match — also routing by task intent (fix / build / research / refactor / docs).
@@ -135,7 +139,7 @@ Because there is no telemetry, improvement runs on what you choose to share: if 
 ## Development
 
 ```bash
-python3 -m unittest discover tests   # 42 offline tests, no LLM calls
+python3 -m unittest discover tests   # 48 offline tests, no LLM calls
 python3 eval/run_eval.py             # golden-set evaluation (spawns claude)
 ```
 

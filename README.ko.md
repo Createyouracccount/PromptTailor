@@ -4,6 +4,10 @@
 
 [English README](README.md)
 
+![PromptTailor 데모: 모호한 요청은 재작성되고, 이미 명확한 요청은 그대로 통과](docs/demo.gif)
+
+*실제 호출 — 약 20초의 대기만 잘라냈습니다. `vhs docs/demo.tape`로 재생성.*
+
 ## 왜 필요한가
 
 Claude Fable 5 / Opus 5 / Sonnet 5 / Haiku는 잘 반응하는 프롬프트 스타일이 서로 다릅니다 — Fable은 단계 나열 없이 목표·제약을 산문으로, Opus는 검증 지시를 넣으면 과잉 검증, Haiku는 작은 번호 단계를 선호합니다. PromptTailor는 이 차이를 [모델 프로필](prompt_tailor/profiles/) 데이터로 관리하고, 현재 모델을 자동 감지해 맞춤 재작성합니다. 작업 유형(fix/build/research/refactor/docs)별 라우팅도 적용됩니다.
@@ -109,7 +113,7 @@ prompt-tailor stats --share   # 이슈에 붙여넣기 좋은 숫자-전용 마�
 ## 개발
 
 ```bash
-python3 -m unittest discover tests   # 오프라인 테스트 42건 (LLM 호출 없음)
+python3 -m unittest discover tests   # 오프라인 테스트 48건 (LLM 호출 없음)
 python3 eval/run_eval.py             # 골든셋 평가
 ```
 

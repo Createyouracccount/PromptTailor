@@ -29,7 +29,7 @@ def main() -> int:
         # use 2026-08-20. Return a usage hint instead of a bare error.
         print(json.dumps({
             "error": "빈 프롬프트",
-            "usage": "/pm <요청> — 명령 뒤에 Space를 누르고 실제 요청을 입력하세요. 예: /pm 로그인 버그 고쳐줘",
+            "usage": "/prompt-tailor:pm <요청> — 명령 뒤에 Space를 누르고 실제 요청을 입력하세요. 예: /prompt-tailor:pm 로그인 버그 고쳐줘 (클라이언트가 축약형을 지원하면 /pm도 가능)",
         }, ensure_ascii=False))
         return 0
     log_path = REPO_ROOT / "runs" / "pm_command.log"

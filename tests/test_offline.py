@@ -81,8 +81,10 @@ class TestBuildMetaPrompt(unittest.TestCase):
         # Latency gate relies on the condensed meta staying small (LOOP_LOG R7).
         # Bound raised 700->900 for intent rules (R22), 900->1100 for the
         # clarity gate (R35); hook E2E latency re-measured after each change.
-        self.assertLess(len(concise), 1100)
-        self.assertLess(len(concise), len(full) / 3)
+        # 1100->1200 for the explicit language rule (R40: English input was
+        # being rewritten into Korean 4/4 before it).
+        self.assertLess(len(concise), 1200)
+        self.assertLess(len(concise), len(full) / 2.5)  # ~1/3 in practice; ratio guard only
 
     def test_concise_exists_for_all_profiles(self):
         for stem in ("fable-5", "opus-5", "sonnet-5", "haiku-4-5"):
@@ -97,7 +99,9 @@ class TestBuildMetaPrompt(unittest.TestCase):
         self.assertIn("fix/debug:", routed)
         # hook latency budget depends on the lean meta staying small (R7, R22;
         # +clarity gate line R35 — E2E re-measured)
-        self.assertLess(len(lean), 700)
+        # 700->800 for the explicit language rule (R40); ~+50 tokens, negligible
+        # against the ~29k-token claude -p baseline.
+        self.assertLess(len(lean), 800)
 
     def test_full_meta_includes_intent_rules(self):
         meta = build_meta_prompt("로그인 버그 고쳐줘", "fable-5")

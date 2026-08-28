@@ -78,7 +78,7 @@ META_PROMPT_TEMPLATE = """\
 - RAW에 없는 사실(파일명, 스택, 에러 내용)을 지어내지 마라. 모르는 것은 조사 지시로 바꾸거나 [가정: ...]으로 표시하라.
 - RAW에 없는 세부 사항(구체적 항목, 기준 수치, 기술 선택, 방법론 이름)을 추가할 때는 반드시 그 문장에 [가정: 이유]를 붙여라. [가정] 없는 무단 구체화는 실패로 간주된다. 단, 조사 지시("먼저 ~를 파악하라")는 가정이 아니므로 표시가 필요 없다.
   예시 — 나쁨: "OWASP Top 10 기준으로 점검하라" / 좋음: "OWASP Top 10 기준으로 점검하라 [가정: 웹 보안 점검의 표준 기준이므로. 다른 기준이 있으면 알려달라]"
-- RAW의 언어를 유지하라.
+- 출력 언어 = RAW의 언어. RAW가 영어면 rewritten_prompt와 changes를 영어로 써라 (Language rule: write rewritten_prompt and changes in the language of RAW — English in, English out). 이 메타프롬프트가 한국어라는 이유로 한국어로 쓰지 마라.
 - 재작성된 프롬프트는 사용자가 그대로 복사해 Claude Code에 붙여넣을 완성문이어야 한다.
 - rewritten_prompt는 700자 이내로 작성하라. 길이보다 밀도가 중요하다 — 원문이 단순하면 재작성도 짧아야 한다.
 
@@ -86,7 +86,7 @@ META_PROMPT_TEMPLATE = """\
 {{
   "action": "rewrite 또는 keep",
   "intent": "fix|build|research|debug|refactor|docs|general 중 하나",
-  "rewritten_prompt": "재작성된 프롬프트 전문 (keep이면 RAW 그대로)",
+  "rewritten_prompt": "재작성된 프롬프트 전문, RAW와 같은 언어로 (keep이면 RAW 그대로)",
   "changes": ["무엇을 왜 바꿨는지 1~3개, 각 한 문장 (keep이면 빈 배열)"]
 }}
 """
@@ -121,7 +121,7 @@ CONDENSED_LEAN_TEMPLATE = """\
 당신은 프롬프트 재작성기다. RAW를 Claude {target_model}에 맞게 재작성하라.
 RAW가 이미 대상·목표·결과물이 구체적이면 action="keep", rewritten_prompt=RAW 그대로 — 명확한 요청을 부풀리지 마라. 길이가 아니라 완결성으로 판정: 단일 함수·스크립트·쿼리처럼 대상 동작이 완결 지정된 요청은 짧아도 keep. 모호할 때만 action="rewrite".
 {target_model} 규칙: {condensed_profile}
-공통: RAW에 없는 사실을 지어내지 말 것 — 모르면 조사 지시로 바꾸고, 추가 세부에는 [가정: 이유] 필수. RAW 언어 유지. rewritten_prompt는 700자 이내.
+공통: RAW에 없는 사실을 지어내지 말 것 — 모르면 조사 지시로 바꾸고, 추가 세부에는 [가정: 이유] 필수. 출력 언어 = RAW의 언어 (RAW가 영어면 rewritten_prompt·changes도 영어로 — English in, English out; 이 지시문이 한국어라는 이유로 한국어로 쓰지 말 것). rewritten_prompt는 700자 이내.
 <RAW>
 {raw_prompt}
 </RAW>
@@ -134,7 +134,7 @@ CONDENSED_TEMPLATE = """\
 재작성 시 intent를 분류하고 해당 유형 규칙을 적용하라:
 {intent_rules}
 {target_model} 규칙: {condensed_profile}
-공통: RAW에 없는 사실을 지어내지 말 것 — 모르면 조사 지시로 바꾸고, 추가 세부에는 [가정: 이유] 필수. RAW 언어 유지. rewritten_prompt는 700자 이내.
+공통: RAW에 없는 사실을 지어내지 말 것 — 모르면 조사 지시로 바꾸고, 추가 세부에는 [가정: 이유] 필수. 출력 언어 = RAW의 언어 (RAW가 영어면 rewritten_prompt·changes도 영어로 — English in, English out; 이 지시문이 한국어라는 이유로 한국어로 쓰지 말 것). rewritten_prompt는 700자 이내.
 <RAW>
 {raw_prompt}
 </RAW>

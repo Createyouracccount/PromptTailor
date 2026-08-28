@@ -93,6 +93,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.json:
         print(json.dumps({
+            "action": result.action,
             "intent": result.intent,
             "target_model": result.target_model,
             "rewritten_prompt": result.rewritten_prompt,
@@ -100,7 +101,7 @@ def main(argv: list[str] | None = None) -> int:
         }, ensure_ascii=False, indent=2))
     else:
         print(result.rewritten_prompt)
-        print("\n--- 변경 요약 ---", file=sys.stderr)
+        print("\n--- changes (변경 요약) ---", file=sys.stderr)
         for c in result.changes:
             print(f"• {c}", file=sys.stderr)
     return 0

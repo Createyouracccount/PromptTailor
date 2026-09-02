@@ -141,7 +141,7 @@ Because there is no telemetry, improvement runs on what you choose to share: if 
 ## Development
 
 ```bash
-python3 -m unittest discover tests   # 48 offline tests, no LLM calls
+python3 -m unittest discover tests   # 49 offline tests, no LLM calls
 python3 eval/run_eval.py             # golden-set evaluation (spawns claude)
 ```
 

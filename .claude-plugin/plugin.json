@@ -1,7 +1,7 @@
 {
   "name": "prompt-tailor",
   "description": "Model-aware prompt rewriting: /pm rewrites a rough request for the Claude model you are running, routed by task intent. Input language is preserved.",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "author": {
     "name": "Createyouracccount",
     "url": "https://github.com/Createyouracccount/PromptTailor"

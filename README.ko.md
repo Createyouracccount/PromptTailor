@@ -115,7 +115,7 @@ prompt-tailor stats --share   # 이슈에 붙여넣기 좋은 숫자-전용 마�
 ## 개발
 
 ```bash
-python3 -m unittest discover tests   # 오프라인 테스트 48건 (LLM 호출 없음)
+python3 -m unittest discover tests   # 오프라인 테스트 49건 (LLM 호출 없음)
 python3 eval/run_eval.py             # 골든셋 평가
 ```
 

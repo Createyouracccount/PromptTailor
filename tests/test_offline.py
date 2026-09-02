@@ -138,6 +138,20 @@ class TestRewriteRetry(unittest.TestCase):
         self.assertEqual(calls["n"], 2)
         self.assertEqual(result.rewritten_prompt, "다시 쓴 프롬프트")
 
+    def test_keep_without_rewritten_prompt_uses_raw(self):
+        # since R42 the meta tells the model to leave rewritten_prompt empty
+        # on keep (output savings); raw must stay authoritative either way
+        from prompt_tailor.engine import rewrite
+        for payload in (
+            '{"action": "keep", "intent": "fix", "rewritten_prompt": "", "changes": []}',
+            '{"action": "keep", "intent": "fix", "changes": []}',
+        ):
+            self._patch_call_claude([payload])
+            r = rewrite("원문 그대로", "fable-5", retries=0)
+            self.assertEqual(r.action, "keep")
+            self.assertEqual(r.rewritten_prompt, "원문 그대로")
+            self.assertEqual(r.changes, [])
+
     def test_exhausted_retries_raise_runtime_error(self):
         import subprocess as sp
 

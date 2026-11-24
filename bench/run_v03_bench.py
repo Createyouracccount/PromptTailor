@@ -20,6 +20,7 @@ Subcommands:
 
 Run from a neutral cwd (outside the repo):
   python3 <repo>/bench/run_v03_bench.py context --out <repo>/runs/v03/context_run1.json
+  ... --session-model claude-opus-5-5   # measure on a specific session model
 """
 
 from __future__ import annotations
@@ -40,8 +41,8 @@ sys.path.insert(0, str(ROOT))
 from prompt_tailor.engine import parse_json_output  # noqa: E402
 from prompt_tailor.session import KEEP_MARKER, build_session_brief  # noqa: E402
 
-SESSION_MODEL = "sonnet"   # stand-in for the user's session model (cost; GATES Phase 4)
-JUDGE_MODEL = "sonnet"
+SESSION_MODEL = "sonnet"   # stand-in for the user's session model (cost; GATES Phase 4); --session-model
+JUDGE_MODEL = "sonnet"     # --judge-model
 BASELINE_REF = "64aea85"   # v0.2.5 release commit
 TARGET = "opus-5"          # the user's usual session model in real usage logs
 
@@ -316,12 +317,17 @@ def summarize_keep(results: list[dict]) -> dict:
 
 
 def main() -> int:
+    global SESSION_MODEL, JUDGE_MODEL
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=["context", "stall", "keep"])
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--session-model", default=SESSION_MODEL,
+                    help="model that executes both arms, e.g. claude-opus-5-5 (default sonnet)")
+    ap.add_argument("--judge-model", default=JUDGE_MODEL, help="judge model (default sonnet)")
     ap.add_argument("--items", help="context items JSONL (default bench/context_set.jsonl; exported real cases go in bench/private/)")
     args = ap.parse_args()
+    SESSION_MODEL, JUDGE_MODEL = args.session_model, args.judge_model
 
     if args.mode == "context":
         items_path = Path(args.items) if args.items else ROOT / "bench" / "context_set.jsonl"

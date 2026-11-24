@@ -69,6 +69,10 @@ UserPromptSubmit 훅은 프롬프트를 교체할 수 없다(RESEARCH.md §4).
 우선순위: ① 사용자가 명시(`--model`) → ② 훅 입력 JSON에 모델 필드가 있으면 사용
 → ③ `claude config get model` / `.claude/settings.json` → ④ 기본값(프로필 중 최신 모델).
 
+실측 반영(현행, `prompt_tailor/detect.py`): 훅 입력에는 모델 필드가 없고 `transcript_path`만 있음 → 대화 기록의 마지막 assistant 레코드 `message.model`이 1순위.
+`/pm` 슬래시 명령은 훅 입력이 없으므로 `CLAUDE_CODE_SESSION_ID`로 `<설정 폴더>/projects/*/<id>.jsonl`을 찾아 같은 방식으로 읽는다(R46).
+앱에서 고른 모델은 settings.json에 기록되지 않으므로 settings는 대화 첫 응답 전에만 쓰는 폴백이며, 브리프에 출처를 함께 표시한다.
+
 ## 열린 질문
 
 - Q1. 재작성기(메타프롬프트 실행) 모델로 Haiku가 충분한가? → 골든셋으로 Haiku vs Sonnet 비교.

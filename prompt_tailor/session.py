@@ -29,6 +29,7 @@ SESSION_PROFILES = {
 }
 
 KEEP_MARKER = "그대로 수행"
+SOURCE_LABELS = {"transcript": "이 대화 기록 기준", "settings": "설정 파일 기준, 앱에서 고른 모델과 다를 수 있음"}
 
 SESSION_BRIEF_TEMPLATE = """\
 아래 절차로 <RAW>를 처리하라. 이 절차는 이번 요청을 처리하는 너의 내부 작업 지침이다 — 사용자에게 설명하거나 답변의 근거로 쓰지 마라.
@@ -60,7 +61,7 @@ SESSION_BRIEF_TEMPLATE = """\
    **보강**: <"{keep}" 또는 확정한 범위·완료 기준·[가정]을 한 줄로>
    재작성된 프롬프트 전문은 출력하지 마라.
 
-6. 모델별 주의 — 네 모델에 해당하는 줄을 적용하라 (설정 기준 감지: {detected}; 실제로 다른 모델이면 그 모델의 줄을 따른다):
+6. 모델별 주의 — 네 모델에 해당하는 줄을 적용하라 (감지: {detected}; 실제로 다른 모델이면 그 모델의 줄을 따른다):
 {profiles}
 
 7. 언어: 사용자에게 보이는 모든 출력은 RAW와 같은 언어로 쓴다 (English RAW → English output, including the two header lines: **Interpretation** / **Clarified**; keep = "as-is").
@@ -72,7 +73,7 @@ USAGE_HINT = (
 )
 
 
-def build_session_brief(detected: str | None = None) -> str:
+def build_session_brief(detected: str | None = None, source: str | None = None) -> str:
     """Return the in-session /pm procedure. Pure string building — no I/O, no LLM."""
     detected = detected if detected in SESSION_PROFILES else None
     profile_lines = "\n".join(
@@ -84,6 +85,6 @@ def build_session_brief(detected: str | None = None) -> str:
         usage=USAGE_HINT,
         keep=KEEP_MARKER,
         intent_rules=intent_lines,
-        detected=detected or "알 수 없음",
+        detected=(f"{detected} — {SOURCE_LABELS.get(source, '출처 미상')}" if detected else "알 수 없음"),
         profiles=profile_lines,
     )

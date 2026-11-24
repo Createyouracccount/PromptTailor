@@ -105,6 +105,7 @@ def to_bench_items(cases: list[dict], prefix: str = "case") -> list[dict]:
             "raw": c["raw"],
             "expected": c.get("expected") or f"(미기재) 문제: {c['problem']}",
             "source": f"feedback:{c.get('category', 'other')}:{c.get('ts', '')}",
+            "private": True,  # real prompt text — keep under gitignored bench/private/
         })
     return items
 

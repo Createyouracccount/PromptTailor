@@ -56,7 +56,7 @@ def cases_main(argv: list[str]) -> int:
     parser.add_argument("--json", action="store_true", help="사례 전체를 JSON으로 출력")
     parser.add_argument(
         "--export", metavar="PATH",
-        help="맥락 벤치(bench/context_set.jsonl) 형식 JSONL로 내보내기",
+        help="맥락 벤치 형식 JSONL로 내보내기 (실제 문장 포함 — 커밋 금지, 예: bench/private/cases.jsonl)",
     )
     args = parser.parse_args(argv)
     cases = load_cases()
@@ -66,6 +66,8 @@ def cases_main(argv: list[str]) -> int:
             for it in items:
                 f.write(json.dumps(it, ensure_ascii=False) + "\n")
         print(f"{len(items)}건 내보냄: {args.export}")
+        print("실제 사용 문장이 들어 있어요. 커밋하지 말고 로컬 벤치로만 쓰세요 "
+              "(bench/private/는 .gitignore에 있음): python3 bench/run_v03_bench.py context --items " + args.export + " --out runs/private/…")
     elif args.json:
         print(json.dumps(cases, ensure_ascii=False, indent=2))
     else:

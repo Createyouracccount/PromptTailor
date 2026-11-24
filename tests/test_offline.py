@@ -557,7 +557,7 @@ class TestCases(_DataDirCase):
         from prompt_tailor import cases
         case, total = cases.record_case(
             {"raw": "웅 봐줘", "problem": "다른 파일을 봄", "category": "context_miss",
-             "context": "직전에 GATES.md 얘기", "junk": "x"}, version="0.3.0")
+             "context": "직전에 CHANGELOG 얘기", "junk": "x"}, version="0.3.0")
         self.assertEqual(total, 1)
         self.assertEqual(case["category"], "context_miss")
         self.assertNotIn("junk", case)
@@ -576,7 +576,8 @@ class TestCases(_DataDirCase):
         items = cases.to_bench_items(cases.load_cases())
         self.assertEqual(items[0]["kind"], "question")
         self.assertEqual(items[0]["expected"], "원인만 설명")
-        self.assertEqual(set(items[0]), {"id", "kind", "context", "raw", "expected", "source"})
+        self.assertEqual(set(items[0]), {"id", "kind", "context", "raw", "expected", "source", "private"})
+        self.assertIs(items[0]["private"], True)
 
     def test_record_case_script_stdin(self):
         import subprocess
@@ -603,3 +604,48 @@ class TestCases(_DataDirCase):
         with contextlib.redirect_stdout(io.StringIO()):
             cli_main(["cases", "--export", str(out)])
         self.assertEqual(len(out.read_text(encoding="utf-8").splitlines()), 1)
+
+
+class TestPrivacyGuard(_DataDirCase):
+    """Real prompts must never reach the repo (see prompt_tailor/privacy.py)."""
+
+    PRIVATE = ["지난주에 정리한 회의록이랑 비교해서 빠진 결정사항 찾아줘",
+               "please compare the vendor quote with our internal budget sheet today",
+               "ㅇㅋ 진행ㄱ"]
+
+    def test_detects_overlap_and_short_quotes(self):
+        from prompt_tailor.privacy import find_leaks
+        files = {
+            "bench/a.jsonl": '{"raw": "회의록이랑 비교해서 빠진 결정사항 좀"}',
+            "docs/b.md": "Users say things like 'compare the vendor quote with our internal budget' often.",
+            "c.md": '예: "ㅇㅋ 진행ㄱ"',
+            "clean.md": "회의록 정리 기능과 예산 비교 기능을 설명한다. 진행 상황은 README 참고.",
+        }
+        hit_files = {f for f, _ in find_leaks(files, self.PRIVATE)}
+        self.assertEqual(hit_files, {"bench/a.jsonl", "docs/b.md", "c.md"})
+
+    def test_snippet_never_contains_full_private_text(self):
+        from prompt_tailor.privacy import find_leaks
+        leaks = find_leaks({"x": self.PRIVATE[0]}, self.PRIVATE)
+        self.assertTrue(leaks)
+        for _, snippet in leaks:
+            self.assertLess(len(snippet), len(self.PRIVATE[0]))
+
+    def test_sources_include_feedback_cases(self):
+        from prompt_tailor import cases
+        from prompt_tailor.privacy import default_sources, load_private_texts
+        cases.record_case({"raw": "어제 만든 대시보드 숫자 다시 맞춰봐", "problem": "다른 대시보드를 봄"})
+        texts = load_private_texts(default_sources())
+        self.assertIn("어제 만든 대시보드 숫자 다시 맞춰봐", texts)
+
+    def test_tracked_bench_files_have_no_private_items(self):
+        # CI cannot see local logs; this is the part of the guard CI enforces.
+        from prompt_tailor.privacy import private_marked_ids
+        for path in sorted((ROOT / "bench").glob("*.jsonl")):
+            self.assertEqual(private_marked_ids(path.read_text(encoding="utf-8")), [], path.name)
+        self.assertEqual(private_marked_ids('{"id": "case001", "private": true}'), ["case001"])
+
+    def test_private_dirs_are_gitignored(self):
+        ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+        for entry in ("bench/private/", "runs/private/", "runs/pm_command.log", "runs/hook.log"):
+            self.assertIn(entry, ignore)

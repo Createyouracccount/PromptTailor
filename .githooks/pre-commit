@@ -1,0 +1,4 @@
+#!/bin/sh
+# Blocks commits that contain real /pm prompts from local logs.
+# Enable once per clone: git config core.hooksPath .githooks
+exec python3 "$(git rev-parse --show-toplevel)/scripts/check_private.py"

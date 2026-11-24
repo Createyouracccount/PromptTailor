@@ -9,3 +9,6 @@ build/
 *.egg-info/
 docs/*.png
 runs/*.stdout
+# real prompts exported from local feedback cases — local benchmarking only
+bench/private/
+runs/private/

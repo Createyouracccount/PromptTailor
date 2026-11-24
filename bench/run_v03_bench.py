@@ -320,10 +320,12 @@ def main() -> int:
     ap.add_argument("mode", choices=["context", "stall", "keep"])
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--items", help="context items JSONL (default bench/context_set.jsonl; exported real cases go in bench/private/)")
     args = ap.parse_args()
 
     if args.mode == "context":
-        items = [json.loads(l) for l in (ROOT / "bench" / "context_set.jsonl").open(encoding="utf-8")]
+        items_path = Path(args.items) if args.items else ROOT / "bench" / "context_set.jsonl"
+        items = [json.loads(l) for l in items_path.open(encoding="utf-8") if l.strip()]
         fn, work, summ = run_context_item, list(enumerate(items)), summarize_context
     elif args.mode == "stall":
         sys.path.insert(0, str(ROOT / "eval"))

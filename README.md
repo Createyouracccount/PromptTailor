@@ -61,7 +61,11 @@ prompt-tailor "rough request" --json             # JSON output
 prompt-tailor "rough request" --concise          # faster, condensed meta-prompt
 ```
 
-**Inside Claude Code** — `/pm rough request`: rewrites for your session's detected model, shows a one-line change summary, then executes the rewritten request. If `/pm` reports "Unknown command" (some clients, e.g. the VSCode extension, register plugin commands under their namespace), use `/prompt-tailor:pm` instead. In auto mode, add the permission rule printed by `claude-code/install.sh` so prompts containing risky-looking words (e.g. "docker prune") aren't false-positive blocked — the backend only rewrites text.
+**Inside Claude Code** — `/pm rough request` (v0.3+): the session model itself reads your request *in the context of the conversation* — resolving "this / that / go ahead / the second one" to what you were actually talking about — then decides: answer it (questions stay questions), run it as-is (already clear), or fill the gaps (scope, done-criteria, `[assumption]`-tagged defaults) and run it. It prints two lines first — **Interpretation** and **Clarified** — then starts working. Unclear points are resolved by investigating or by a stated default rather than by asking you back; it asks first only for hard-to-undo actions or when there is no basis for a default. No separate rewrite call, so there is no wait (backend < 0.1s). If `/pm` reports "Unknown command" (some clients, e.g. the VSCode extension, register plugin commands under their namespace), use `/prompt-tailor:pm` instead.
+
+**`/prompt-tailor:feedback [what was wrong]`** — when a `/pm` result missed, run this right after. The session model writes one case (the raw request, the context needed to read it, what `/pm` understood, what went wrong, what it should have done) to `~/.claude/prompt-tailor/cases.jsonl` on your machine. `prompt-tailor cases` lists them; `prompt-tailor cases --export cases.jsonl` turns them into context-benchmark items ([bench/context_set.jsonl](bench/context_set.jsonl) format) so real misses become regression tests for the next rule change.
+
+> Before v0.3, `/pm` sent your text to a separate `claude -p` (haiku) process that could not see the conversation. Most real `/pm` uses turned out to be follow-ups that only make sense with the conversation, so v0.3 moved the rewrite into the session. The context-blind path remains for the CLI, MCP, and hook, where no conversation is available.
 
 **`/prompt-tailor:loop <goal>` (experimental)** — scaffold an improvement loop instead of rewriting one prompt: extracts your working principles from the conversation (each with its source — nothing invented), drafts a ledger (`LOOP_LOG.md`) and measurable pass/fail gates (`GATES.md`, frozen only with your approval), then runs discover → minimal change → measure → commit rounds. Small one-off tasks are turned away toward `/pm`. No LLM backend call — the session model does the extraction. Not yet separately evaluated.
 
@@ -119,6 +123,8 @@ Every claim is backed by ledgered experiments (blind pairwise LLM judging; [LOOP
 - **Task outcome pilot (n=3): the raw prompt won 3–0.** On *already-clear, self-contained* codegen tasks run headless, rewriting hurt: it inflated scope, its investigation directives stalled a run, and its verification demands made the executor fabricate test results — [eval/ab_task_outcome_results.json](eval/ab_task_outcome_results.json)
 - **Vague-task outcome A/B (n=10, 8 valid): raw 4 — rewritten 4.** Even on vague requests — the territory where this tool claims benefit — single-turn headless execution showed no outcome-level advantage. Rewrites won when they turned vagueness into a reasonable default implementation; they lost when their investigation directives made the executor ask questions instead of producing anything — [eval/ab_vague_outcome_results.json](eval/ab_vague_outcome_results.json)
 
+- **v0.3 in-session `/pm` vs v0.2.5 (2026-11-24, session model stand-in: sonnet; judge: sonnet)** — on a new 12-item *context* benchmark ([bench/context_set.jsonl](bench/context_set.jsonl): conversation excerpt + follow-up such as "ok go ahead" / "re-run that" / "is this handled?", modelled on real `/pm` usage), both versions picked the right target 12/12 in both runs (the v0.2.5 template's "prefer conversation context" rule already recovers the context-blind rewrite). Where v0.3 differs is response quality: blind pairwise **11–0–1 and 12–0–0** for v0.3 (judges cited v0.2.5's leaked "rewrite/changes" chatter and scope creep). On the 10 vague tasks, responses that ended by only asking questions: **v0.3 0/10, v0.2.5 1/10**; questions were never turned into tasks (0/10 violations); already-clear requests kept as-is **17/20**. A first stall run was invalidated (the harness disabled tools without telling the executor) and is kept on record. Details: [runs/MEASUREMENT_LOG.md](runs/MEASUREMENT_LOG.md)
+
 **What this means**: the measured benefit is on vague, underspecified requests — the golden set's territory. Already-clear requests should be left alone, so since v0.2.0 the rewriter runs a **clarity gate** first: if your request is already specific it returns it untouched (`action: keep`; the hook then injects nothing). Gate accuracy on a balanced 40-prompt benchmark, measured over **3 repeated runs from a neutral cwd**: **90–95%** — vague recall 59/60 (misses almost never in the harmful direction), clear recall 16–18/20. An earlier single-run figure of 98% did not reproduce and has been retired. Dataset, runner, per-run results, and the stubborn borderline cases are documented in [BENCHMARK.md](BENCHMARK.md).
 
 ## Usage records, privacy, and how to help improve it
@@ -134,14 +140,14 @@ Because there is no telemetry, improvement runs on what you choose to share: if 
 
 ## What we do NOT guarantee
 
-- **Higher task success is not proven — including on vague requests.** Prompt-quality wins are judge-based; the outcome data so far is the 3-task pilot (raw won 3–0) and the 10-task vague A/B (4–4 draw). Both ran headless single-turn, which structurally penalizes rewrites that ask good clarifying questions — interactive use may differ, but we have not measured that.
+- **Higher task success is not proven — including on vague requests.** Prompt-quality wins are judge-based; the outcome data so far is the 3-task pilot (raw won 3–0) and the 10-task vague A/B (4–4 draw). Both ran headless single-turn, which structurally penalizes rewrites that ask good clarifying questions — interactive use may differ, but we have not measured that. The v0.3 measurements are also headless, single-judge, small-n, and use sonnet as a stand-in for your session model (real use is usually Opus/Fable); the context benchmark is modelled on real usage, not copied from real conversations.
 - The rewriter occasionally adds specifics without an `[assumption]` tag (fidelity 4.8, not 5.0), and can misclassify intent.
 - All experiments are small-n, single-LLM-judge, and were run in this repo's environment.
 
 ## Development
 
 ```bash
-python3 -m unittest discover tests   # 49 offline tests, no LLM calls
+python3 -m unittest discover tests   # 61 offline tests, no LLM calls
 python3 eval/run_eval.py             # golden-set evaluation (spawns claude)
 ```
 

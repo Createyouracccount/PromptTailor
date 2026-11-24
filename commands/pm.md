@@ -1,17 +1,13 @@
 ---
-description: 요청을 현재 모델에 맞는 프롬프트로 재작성한 뒤 그 프롬프트로 수행
+description: 대충 쓴 요청을 대화 맥락으로 해석·보강해 현재 모델에 맞게 바로 수행 (세션 내 재작성)
+argument-hint: <대충 쓴 요청>
 allowed-tools: Bash(python3:*)
 ---
 
-## 재작성 결과
+<RAW>
+$ARGUMENTS
+</RAW>
 
-!`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/pm_command.py "$ARGUMENTS"`
+## 처리 절차
 
-## 지시
-
-1. 첫 출력으로 변경 요약(changes)을 한 줄로 사용자에게 보여준 뒤 작업을 시작하라. 생략하지 마라.
-2. 위 "재작성 결과"의 rewritten_prompt를 사용자의 실제 요청으로 간주하고 그대로 수행하라.
-3. 사용자에게 보이는 모든 응답은 원문 "$ARGUMENTS"와 같은 언어로 작성하라 (한국어 원문이면 한국어로).
-4. [가정]으로 표시된 부분은 단정하지 말고 작업 중에 확인하라.
-5. 재작성 결과가 에러이면 원문 "$ARGUMENTS"를 그대로 수행하라. 단, 원문도 비어 있으면 아무 작업도 하지 말고 usage 안내 한 줄만 사용자에게 보여줘라.
-6. 재작성기는 대화 맥락 없이 원문 텍스트만 본다. rewritten_prompt가 현재 대화 맥락과 어긋나면(예: "이제", "그럼", "아까 그거" 같은 지시어가 앞선 대화를 가리키는데 재작성이 범위를 다른 곳으로 넓힌 경우) 맥락상의 원문 의도를 우선하고, 그렇게 판단했음을 사용자에게 한 줄로 알려라.
+!`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/pm_command.py`

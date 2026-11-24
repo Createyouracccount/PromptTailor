@@ -6,15 +6,16 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$HOME/.claude/commands"
-sed "s|__PROMPT_TAILOR_ROOT__|$REPO_ROOT|g" "$REPO_ROOT/claude-code/commands/pm.md" > "$HOME/.claude/commands/pm.md"
-echo "✓ /pm 커맨드 설치됨: ~/.claude/commands/pm.md"
+for cmd in pm feedback; do
+  sed "s|__PROMPT_TAILOR_ROOT__|$REPO_ROOT|g" "$REPO_ROOT/claude-code/commands/$cmd.md" > "$HOME/.claude/commands/$cmd.md"
+  echo "✓ /$cmd 커맨드 설치됨: ~/.claude/commands/$cmd.md"
+done
 
 cat <<EOF
 
-[권장] auto 모드 사용 시: 프롬프트에 위험해 보이는 단어(예: "docker prune", "삭제")가 있으면
-분류기가 /pm 백엔드 실행을 오탐 차단할 수 있습니다. ~/.claude/settings.json "permissions"에 추가:
-  "allow": ["Bash(python3 $REPO_ROOT/scripts/pm_command.py:*)"]
-(이 스크립트는 텍스트 재작성만 하며 프롬프트 내용을 실행하지 않습니다.)
+[선택] 권한 확인 없이 쓰려면 ~/.claude/settings.json "permissions"에 추가:
+  "allow": ["Bash(python3 $REPO_ROOT/scripts/pm_command.py)", "Bash(python3 $REPO_ROOT/scripts/record_case.py:*)"]
+(v0.3부터 /pm 백엔드는 프롬프트 원문을 인자로 받지 않으므로 "docker prune" 같은 단어로 오탐 차단되지 않습니다.)
 EOF
 
 cat <<EOF

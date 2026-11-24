@@ -1,0 +1,217 @@
+{
+  "summary": {
+    "n": 20,
+    "valid": 20,
+    "kept": 19,
+    "format_ok": 20,
+    "not_kept_ids": [
+      "c02"
+    ],
+    "errors": [],
+    "wall_s": 69.5,
+    "session_model": "sonnet",
+    "judge_model": "sonnet"
+  },
+  "results": [
+    {
+      "id": "c01",
+      "raw": "파이썬으로 퀵정렬 함수 하나 짜줘 간단 설명도",
+      "label": "keep",
+      "source": "task-outcome-pilot",
+      "v03_out": "**해석**: 파이썬으로 퀵정렬 함수 하나를 작성하고, 동작 원리를 간단히 설명한다.\n**보강**: 그대로 수행 [가정: 별도 지정이 없으므로 숫자 리스트용 기본 버전 하나만 작성, 제자리(in-place) 정렬·벤치마크·테스트 코드는 범위 밖]\n\n첫 행동 계획:\n1. `quicksort(arr)` 함수 하나를 작성한다. 가운데 원소를 피벗으로 삼아 `less / equal / greater` 세 묶음으로 나누고 재귀 호출한다. 중복 값도 자연스럽게 처리되고 읽기 쉽다.\n2. 코드 블록 바로 아래에 짧은 설명을 붙인다: 피벗 선택 → 분할 → 재귀 → 합치기, 시간복잡도(평균 O(n log n), 최악 O(n²)).\n3. 이 환경에서는 도구를 실행할 수 없으므로 파일 생성이나 실행 없이 답변 안에 코드만 제공한다.",
+      "clarified_line": "그대로 수행 [가정: 별도 지정이 없으므로 숫자 리스트용 기본 버전 하나만 작성, 제자리(in-place) 정렬·벤치마크·테스트 코드는 범위 밖]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c02",
+      "raw": "CSV 파일에서 중복 행 제거하는 스크립트 만들어줘",
+      "label": "keep",
+      "source": "task-outcome-pilot",
+      "v03_out": "**해석**: CSV 파일에서 중복 행을 제거하고 결과를 새 CSV로 저장하는 스크립트를 만든다.\n**보강**: [가정: 파일명 미지정이라 입출력 경로는 CLI 인자로 받음] [가정: 모든 컬럼 값이 같은 행을 중복으로 보고, 첫 행을 남기고 헤더를 보존함] 파이썬 표준 라이브러리(`csv`)만 쓰고 원본은 덮어쓰지 않음. 범위 밖은 퍼지 매칭, GUI, 병렬 처리. 완료 기준은 샘플 CSV로 실제 실행해 중복 제거를 확인하는 것.\n\n**첫 행동 계획**\n1. 작업 디렉터리에 `dedupe_csv.py`를 작성한다. `argparse`로 `input`, `output`(기본값 `<입력>_dedup.csv`), 선택 옵션 `--columns`(특정 컬럼 기준)를 받는다.\n2. 행을 한 줄씩 읽으며 `set`으로 본 행을 추적해 순서를 유지한다. 인코딩은 `utf-8-sig`로 읽어 엑셀 BOM을 처리하고, 쓸 때는 줄바꿈을 `newline=\"\"`로 지정한다.\n3. 스크래치패드에 중복이 섞인 샘플 CSV를 만들어 스크립트를 실행하고, 행 수가 줄었는지와 헤더·순서가 유지됐는지 확인한다.\n4. 결과(제거한 행 수 포함)와 사용법을 짧게 보고한다.",
+      "clarified_line": "[가정: 파일명 미지정이라 입출력 경로는 CLI 인자로 받음] [가정: 모든 컬럼 값이 같은 행을 중복으로 보고, 첫 행을 남기고 헤더를 보존함] 파이썬 표준 라이브러리(`csv`)만 쓰고 원본은 덮어쓰지 않음. 범위 밖은 퍼지 매칭, GUI, 병렬 처리. 완료 기준은 샘플 CSV로 실제 실행해 중복 제거를 확인하는 것.",
+      "kept": false,
+      "format_ok": true
+    },
+    {
+      "id": "c03",
+      "raw": "이메일 형식 검증하는 함수 자바스크립트로 만들어줘",
+      "label": "keep",
+      "source": "task-outcome-pilot",
+      "v03_out": "**해석**: 자바스크립트로 이메일 주소 형식이 올바른지 검사하는 함수를 새로 만든다.\n**보강**: 그대로 수행 [가정: 형식 검증만 하고 MX 조회·실존 확인은 범위 밖] [가정: 의존성 없는 순수 함수, 실용 규칙 기준이며 RFC 5322 전체 문법은 아님]\n\n첫 행동 계획:\n1. `isValidEmail(email)` 함수 하나를 작성한다. 비문자열을 포함한 모든 입력에 예외 없이 `true`/`false`만 반환하고, 전체 254자·로컬 파트 64자 제한, `@` 정확히 1개, 도메인 라벨 규칙(하이픈 위치, 연속 점 금지), TLD 2자 이상을 검사한다.\n2. 유효·무효 케이스(`a@b.co`, `a@@b.com`, `.a@b.com`, `a@b`, 공백 포함, `null` 등)를 scratchpad에서 node로 돌려 통과를 확인한다.\n3. 최종 코드와 테스트 결과를 짧게 보고한다.",
+      "clarified_line": "그대로 수행 [가정: 형식 검증만 하고 MX 조회·실존 확인은 범위 밖] [가정: 의존성 없는 순수 함수, 실용 규칙 기준이며 RFC 5322 전체 문법은 아님]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c04",
+      "raw": "src/utils/date.py의 format_date 함수에 ISO 8601 출력 옵션 추가해줘. 기존 호출부는 그대로 동작해야 해",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: `src/utils/date.py`의 `format_date`에 ISO 8601 형식으로 출력하는 옵션을 추가하고, 기존 호출부는 수정 없이 동일하게 동작하게 한다.\n**보강**: 그대로 수행 [가정: 옵션은 맨 뒤 키워드 전용 인자로 두고 기본값은 현재 동작을 유지하는 값으로 한다. 이름과 형태는 기존 시그니처를 읽고 확정한다]\n\n첫 행동 계획:\n1. `src/utils/date.py`를 읽어 `format_date`의 현재 시그니처, 반환 형식, 입력 타입(`date`/`datetime`/문자열 등)을 확인한다.\n2. 저장소 전체에서 `format_date` 호출부를 모두 검색해 위치 인자·키워드 인자 사용 패턴을 파악한다.\n3. 기본값이 기존 출력을 그대로 내는 옵션을 추가하고, 옵션이 켜지면 `isoformat()` 계열로 ISO 8601 문자열을 반환하게 한다.\n4. 기존 테스트를 돌려 회귀가 없는지 확인하고, 옵션 on/off 케이스 테스트를 추가한다. 호출부 수정이나 인접 리팩토링은 하지 않는다.",
+      "clarified_line": "그대로 수행 [가정: 옵션은 맨 뒤 키워드 전용 인자로 두고 기본값은 현재 동작을 유지하는 값으로 한다. 이름과 형태는 기존 시그니처를 읽고 확정한다]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c05",
+      "raw": "README.md의 설치 섹션에 Python 3.10 이상 필요하다는 문장 한 줄 추가해줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: README.md의 설치 섹션에 \"Python 3.10 이상 필요\"라는 안내 문장 한 줄을 추가한다.\n**보강**: 그대로 수행. 범위는 README.md 설치 섹션 한 곳에 한 줄 추가뿐이다. [가정: 문장은 README 본문 언어와 문체에 맞춘다]\n\n첫 행동 계획:\n1. Glob으로 README.md 위치를 찾는다. 작업 디렉터리가 scratchpad라 없으면 상위 경로를 찾아보고, 끝내 없으면 파일을 새로 만들지 않고 그 사실을 보고한다.\n2. Read로 설치 섹션을 확인한다. 이미 Python 버전 언급이 있는지, 문서 언어가 한국어인지 영어인지 본다.\n3. Edit으로 설치 섹션 도입부, 즉 설치 명령 바로 앞에 한 줄을 삽입한다. 이미 비슷한 문장이 있으면 중복 추가 대신 그 줄을 수정한다.\n4. 변경된 줄을 보고하고 끝낸다. 다른 섹션이나 파일은 건드리지 않는다.",
+      "clarified_line": "그대로 수행. 범위는 README.md 설치 섹션 한 곳에 한 줄 추가뿐이다. [가정: 문장은 README 본문 언어와 문체에 맞춘다]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c06",
+      "raw": "tests/test_auth.py 실행해서 실패하는 테스트 있으면 알려만 줘. 수정은 하지 마",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: tests/test_auth.py를 실행해 실패하는 테스트가 있는지 확인하고 알려준다.\n**보강**: 그대로 수행. 이 파일 하나만 실행하고 보고하며, 코드·테스트·설정은 수정하지 않는다.\n\n첫 행동 계획:\n1. Glob으로 `tests/test_auth.py` 위치를 확인한다. 현재 작업 디렉터리가 scratchpad이고 git 저장소도 아니라서 파일이 없을 수 있다. [가정: 없으면 하위 디렉터리를 검색하고, 그래도 없으면 경로를 물어본다.]\n2. 프로젝트 루트에서 `python -m pytest tests/test_auth.py -v`를 실행한다. pytest가 없으면 프로젝트의 테스트 러너 설정을 확인한다.\n3. 실패한 테스트 이름과 핵심 에러 메시지만 요약해서 보고한다. 수정안은 제시하지 않는다.",
+      "clarified_line": "그대로 수행. 이 파일 하나만 실행하고 보고하며, 코드·테스트·설정은 수정하지 않는다.",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c07",
+      "raw": "requirements.txt의 pandas 버전을 2.2로 올리고 설치 확인해줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: requirements.txt의 pandas 항목을 2.2 버전대로 올리고, 그 요구사항으로 실제 설치가 되는지 확인한다.\n**보강**: 그대로 수행. [가정: 기존 파일의 핀 표기(`==`, `~=`, `>=`)를 따라 2.2.x로 맞춘다. 수정 범위는 pandas 줄(중복 포함)만이고 다른 패키지는 건드리지 않는다.]\n\n첫 행동 계획:\n1. Glob/Grep으로 requirements.txt 위치와 현재 pandas 줄, 표기 방식을 확인한다. 파일이 없으면 새로 만들지 않고 그대로 보고한다.\n2. Edit으로 pandas 줄만 2.2 버전대로 수정한다.\n3. 전역 환경을 건드리지 않도록 스크래치패드에 임시 venv를 만들고 `pip install -r requirements.txt`를 실행한다.\n4. `python -I -c \"import pandas; print(pandas.__version__)\"`로 2.2.x인지 확인한다. 의존성 충돌이나 설치 실패가 있으면 출력 그대로 보고한다.\n5. 변경한 줄과 설치 확인 결과만 짧게 보고한다.",
+      "clarified_line": "그대로 수행. [가정: 기존 파일의 핀 표기(`==`, `~=`, `>=`)를 따라 2.2.x로 맞춘다. 수정 범위는 pandas 줄(중복 포함)만이고 다른 패키지는 건드리지 않는다.]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c08",
+      "raw": "login() 함수에서 비밀번호를 평문으로 로깅하는 줄 지워줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: `login()` 함수 안에서 비밀번호를 평문으로 로그에 남기는 줄을 삭제한다.\n**보강**: 그대로 수행 (`login()` 안의 해당 로깅 줄만 삭제하고 다른 함수·파일은 수정하지 않음)\n\n첫 행동 계획:\n1. Grep으로 `login` 정의(`def login`, `function login` 등)의 위치를 찾는다. 후보가 여러 개면 비밀번호를 로깅하는 쪽을 대상으로 삼는다.\n2. Read로 해당 함수를 열어 비밀번호를 출력하는 `log`/`print`/`console.log` 줄을 특정한다.\n3. Edit으로 그 줄만 제거한다. 삭제 후 변수가 쓰이지 않게 되더라도 정리하지 않고 보고만 한다.\n4. 변경 내용을 짧게 보고한다. 다른 곳에서 비슷한 로깅이 발견되면 수정 없이 위치만 알린다.",
+      "clarified_line": "그대로 수행 (`login()` 안의 해당 로깅 줄만 삭제하고 다른 함수·파일은 수정하지 않음)",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c09",
+      "raw": "이 폴더의 .png 파일 개수 세서 알려줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: 현재 작업 디렉터리에 있는 .png 파일이 몇 개인지 세어서 알려준다.\n**보강**: 그대로 수행. [가정: \"이 폴더\"는 작업 디렉터리를 뜻하고, 하위 폴더는 제외하며 `.PNG`처럼 대소문자가 달라도 센다]\n\n첫 행동 계획:\n1. `find . -maxdepth 1 -type f -iname '*.png' | wc -l`을 실행한다. 읽기 전용이라 파일은 건드리지 않는다.\n2. 개수를 한 줄로 알려준다. 0개면 0개라고 말한다.\n3. 하위 폴더까지 세는 것은 요청 범위 밖이므로 하지 않는다. 필요하면 그때 말해달라고 덧붙인다.",
+      "clarified_line": "그대로 수행. [가정: \"이 폴더\"는 작업 디렉터리를 뜻하고, 하위 폴더는 제외하며 `.PNG`처럼 대소문자가 달라도 센다]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c10",
+      "raw": "git diff 보여줘. 설명은 필요 없어",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: 현재 작업 디렉터리의 `git diff` 결과(워킹 트리의 unstaged 변경)를 설명 없이 보여달라는 요청.\n**보강**: 그대로 수행 [가정: 문자 그대로 `git diff`만 실행하고 staged 변경(`--cached`)은 포함하지 않음]\n\n첫 행동 계획:\n1. Bash로 `git diff`를 바로 실행한다.\n2. 변경이 있으면 diff 출력만 그대로 보여주고, 요약이나 해설은 붙이지 않는다.\n3. 환경 정보상 이 디렉터리는 git 저장소가 아니므로 `not a git repository` 오류가 날 수 있다. 그 경우 오류 사실만 한 줄로 알리고, `git init`이나 다른 경로 탐색 같은 범위 밖 작업은 하지 않는다.\n4. diff가 비어 있으면 \"변경 사항 없음\"이라고만 알린다.",
+      "clarified_line": "그대로 수행 [가정: 문자 그대로 `git diff`만 실행하고 staged 변경(`--cached`)은 포함하지 않음]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c11",
+      "raw": "Dockerfile의 베이스 이미지를 python:3.12-slim으로 바꿔줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: Dockerfile의 베이스 이미지(`FROM`)를 `python:3.12-slim`으로 교체한다.\n**보강**: 그대로 수행. [가정: Dockerfile이 여러 개거나 멀티스테이지면 Python 베이스를 쓰는 `FROM`만 바꾸고 나머지는 유지]\n\n첫 행동 계획:\n1. Glob으로 작업 디렉터리에서 `Dockerfile*`를 찾고, 없으면 하위 폴더까지 넓혀 찾는다.\n2. 찾은 파일을 Read로 열어 `FROM` 줄을 확인한다. 멀티스테이지 여부, `ARG`로 버전을 받는지, 기존 태그(alpine 등)를 같이 본다.\n3. Edit으로 해당 `FROM`의 이미지 태그만 `python:3.12-slim`으로 바꾼다.\n4. 기존 이미지가 alpine이어서 `apk`를 쓰는 식으로 slim(Debian)과 충돌할 수 있으면, 임의로 고치지 않고 결과에 알린다.\n5. 수정 후 `FROM` 줄을 다시 확인해 변경 내용만 짧게 보고한다. 빌드는 요청받지 않았으므로 실행하지 않는다.",
+      "clarified_line": "그대로 수행. [가정: Dockerfile이 여러 개거나 멀티스테이지면 Python 베이스를 쓰는 `FROM`만 바꾸고 나머지는 유지]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c12",
+      "raw": "fibonacci 함수를 재귀에서 반복문으로 바꿔줘. 시그니처는 유지",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: 코드베이스의 `fibonacci` 함수를 재귀 구현에서 반복문 구현으로 바꾼다. 함수명, 파라미터, 반환 타입은 그대로 둔다.\n**보강**: 그대로 수행. [가정: 대상 파일이 지정되지 않았으므로 작업 디렉터리에서 직접 찾는다. 동작 불변이 조건이고, 수정 범위는 해당 함수 본문뿐이다.]\n\n첫 행동 계획:\n1. Grep으로 작업 디렉터리 전체(모든 언어)에서 `fibonacci` 정의와 호출부를 찾는다.\n2. 정의 파일을 Read로 열어 시그니처, 기저 사례(n=0, 1), 음수나 잘못된 입력 처리, 반환 타입을 확인한다.\n3. Edit으로 본문만 반복문(이전 두 값을 갱신하는 방식)으로 교체한다. 기존 동작은 바꾸지 않는다.\n4. 기존 테스트가 있으면 실행한다. 없으면 scratchpad에 재귀·반복 결과를 비교하는 임시 스크립트를 두고 n=0~20 정도를 대조한다.\n5. 정의가 여러 개거나 대상이 불분명하면 `fibonacci`라는 이름의 함수만 수정하고 나머지는 보고만 한다.",
+      "clarified_line": "그대로 수행. [가정: 대상 파일이 지정되지 않았으므로 작업 디렉터리에서 직접 찾는다. 동작 불변이 조건이고, 수정 범위는 해당 함수 본문뿐이다.]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c13",
+      "raw": "config.json에서 timeout 값을 30에서 60으로 바꿔줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: config.json의 `timeout` 값을 30에서 60으로 변경한다.\n**보강**: 그대로 수행. 적용 범위는 값이 30인 `timeout` 키로 한정하고, `connect_timeout` 같은 비슷한 이름의 키와 다른 값은 건드리지 않는다.\n\n첫 행동 계획:\n1. Glob으로 작업 디렉터리에서 `config.json` 위치를 찾는다. 현재 디렉터리는 scratchpad이고 git 저장소가 아니므로 상위 경로도 함께 확인한다.\n2. 파일을 Read로 열어 `timeout` 키가 몇 개이고 현재 값이 얼마인지 확인한다.\n3. 대상이 하나면 Edit으로 `30`을 `60`으로 바꾸고, 변경된 줄만 보고한다.\n4. `config.json`이 여러 개이거나 `timeout`이 여러 곳에 있어 어느 쪽인지 판단할 근거가 없으면, 수정 전에 어느 것인지 한 번만 묻는다.",
+      "clarified_line": "그대로 수행. 적용 범위는 값이 30인 `timeout` 키로 한정하고, `connect_timeout` 같은 비슷한 이름의 키와 다른 값은 건드리지 않는다.",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c14",
+      "raw": "utils.py의 함수들에 타입 힌트만 추가해줘. 로직 변경 금지",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: `utils.py`에 있는 모든 함수(클래스 메서드 포함)의 매개변수와 반환값에 타입 힌트를 추가한다. 로직은 바꾸지 않는다.\n**보강**: 그대로 수행. [가정: 경로가 없으므로 작업 디렉터리에서 `utils.py`를 찾는다. 여러 개면 가장 유력한 것부터 하고 목록을 알린다.] 범위는 시그니처 주석과 필요한 `typing` import 추가까지만이다.\n\n첫 행동 계획:\n1. Glob으로 `utils.py`를 찾고 Read로 전체를 읽는다.\n2. 각 함수의 기본값, docstring, 호출부, 반환 경로로 타입을 추론한다. 불확실하면 `Any`나 `Optional`로 보수적으로 둔다.\n3. Edit으로 시그니처에만 힌트를 넣는다. 본문, 기본값, 이름, 순서는 건드리지 않는다.\n4. `python -m py_compile`로 문법을 확인하고, 변경 전후 비교로 시그니처 외 변경이 없는지 점검한다.\n5. 마지막에 힌트를 추가한 함수 목록과 `Any`로 남긴 곳을 간단히 보고한다.",
+      "clarified_line": "그대로 수행. [가정: 경로가 없으므로 작업 디렉터리에서 `utils.py`를 찾는다. 여러 개면 가장 유력한 것부터 하고 목록을 알린다.] 범위는 시그니처 주석과 필요한 `typing` import 추가까지만이다.",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c15",
+      "raw": "Write a bash one-liner that finds files larger than 100MB under the current directory",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**Interpretation**: Write a bash one-liner that recursively finds all regular files larger than 100MB under the current directory.\n**Clarified**: as-is [assumption: \"100MB\" means 100 MiB, since `find`'s `M` unit is MiB, and the command works with both macOS (BSD) and GNU `find`]\n\n```bash\nfind . -type f -size +100M\n```\n\nTo also show sizes, largest first: `find . -type f -size +100M -exec du -h {} + | sort -rh`\n\nI couldn't run either command in this environment, so they haven't been tested. No files will be changed, since both commands only read.",
+      "clarified_line": "as-is [assumption: \"100MB\" means 100 MiB, since `find`'s `M` unit is MiB, and the command works with both macOS (BSD) and GNU `find`]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c16",
+      "raw": "Rename the variable tmp to buffer in parser.py, nothing else",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**Interpretation**: Rename the variable `tmp` to `buffer` in `parser.py`, with no other changes.\n**Clarified**: as-is\n\nFirst action plan:\n1. Glob for `parser.py` (the working directory isn't a git repo, so I'll confirm the path and ask only if there are several matches).\n2. Read the file and grep `\\btmp\\b` to list every use of the variable. Substrings like `tmp_dir`, string literals, comments and attributes such as `.tmp` are not the variable and stay as they are.\n3. Check that `buffer` isn't already used or shadowed in the same scope. If it is, I'll report the conflict instead of renaming.\n4. Edit only the `tmp` references to `buffer`, in every scope where that variable appears, without touching formatting, imports or logic.\n5. Check with grep that no `tmp` variable references remain, and run `python -I -m py_compile` on the file. Then I'll report the changed lines in a few lines.",
+      "clarified_line": "as-is",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c17",
+      "raw": "정렬된 배열에서 이진 탐색하는 함수 자바로 짜줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: 오름차순으로 정렬된 `int[]`에서 목표값의 인덱스를 찾는 이진 탐색 함수를 Java로 작성합니다.\n**보강**: 그대로 수행. [가정: 별도 지정이 없어 `int[]`, 오름차순, 반복문 방식으로 작성하고, 못 찾으면 -1을 반환]\n\n실행 계획:\n1. `binarySearch(int[] arr, int target)` 함수를 작성합니다. `mid = low + (high - low) / 2`로 오버플로를 막고, `low <= high` 조건으로 반복합니다.\n2. 동작 확인용 `main`을 짧게 붙입니다. 케이스는 존재하는 값, 없는 값, 양 끝 값, 빈 배열입니다.\n3. 코드 블록과 시간복잡도(O(log n)) 한 줄만 답변합니다. 재귀 버전이나 제네릭 버전처럼 요청하지 않은 확장은 넣지 않습니다.",
+      "clarified_line": "그대로 수행. [가정: 별도 지정이 없어 `int[]`, 오름차순, 반복문 방식으로 작성하고, 못 찾으면 -1을 반환]",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c18",
+      "raw": "현재 브랜치 이름 알려줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: 현재 작업 디렉터리의 git 브랜치 이름을 알려달라는 질문.\n**보강**: 그대로 수행 (읽기 전용 조회만 하고, 브랜치 생성이나 `git init` 같은 변경은 하지 않음)\n\n첫 행동 계획:\n1. 작업 디렉터리(`.../scratchpad`)에서 `git branch --show-current`를 실행한다.\n2. 환경 정보상 이 디렉터리는 git 저장소가 아니라서 `not a git repository` 오류가 날 가능성이 높다. 그 경우 브랜치가 없다고 있는 그대로 알린다.\n3. detached HEAD라서 출력이 비어 있으면 `git rev-parse --short HEAD`로 커밋 해시를 대신 보여준다.\n4. 다른 프로젝트 경로의 브랜치를 원하시면 경로를 알려달라고 안내한다.",
+      "clarified_line": "그대로 수행 (읽기 전용 조회만 하고, 브랜치 생성이나 `git init` 같은 변경은 하지 않음)",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c19",
+      "raw": "package.json의 version을 1.2.0으로 올려줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: package.json의 `version` 필드를 1.2.0으로 올린다.\n**보강**: 그대로 수행\n\n첫 행동 계획:\n1. Glob으로 package.json 위치를 찾는다. 현재 작업 디렉터리는 scratchpad이고 git 저장소도 아니라서, 파일이 없을 수 있다.\n2. 파일을 Read로 열어 현재 `version` 값을 확인한다.\n3. Edit으로 최상위 `version` 값만 `1.2.0`으로 바꾼다. 다른 필드, 포맷, 들여쓰기는 건드리지 않는다.\n4. package.json이 여러 개(모노레포 등)면 루트 것만 수정하고, 나머지는 [가정: 루트가 대상] 으로 밝힌다.\n5. package-lock.json, 커밋, 태그, 배포는 요청 범위 밖이라 하지 않는다. lockfile의 version이 어긋나 있으면 알리기만 한다.\n6. 끝나면 변경 전후 버전을 한 줄로 보고한다.",
+      "clarified_line": "그대로 수행",
+      "kept": true,
+      "format_ok": true
+    },
+    {
+      "id": "c20",
+      "raw": "users 테이블에서 최근 7일 가입자 수 세는 SQL 쿼리 짜줘",
+      "label": "keep",
+      "source": "authored",
+      "v03_out": "**해석**: users 테이블에서 최근 7일 동안 가입한 사용자 수를 세는 SQL 쿼리를 작성한다.\n**보강**: 그대로 수행. [가정: 가입 시각 컬럼은 `created_at`, DB는 PostgreSQL, \"최근 7일\"은 현재 시각 기준 직전 7×24시간]\n\n첫 행동 계획:\n1. 작업 디렉터리에서 스키마, 마이그레이션, DDL 파일(`*.sql`, `schema.*`, `migrations/`)을 검색해 실제 컬럼명과 DB 종류를 확인한다. 현재 디렉터리는 git 저장소가 아니라 scratchpad이므로 파일이 없을 가능성이 높다.\n2. 확인되지 않으면 위 가정대로 진행한다. 먼저 `WHERE created_at >= NOW() - INTERVAL '7 days'`로 `COUNT(*)`하는 기본 쿼리를 보여준다.\n3. 이어서 MySQL(`DATE_SUB(NOW(), INTERVAL 7 DAY)`)과 SQLite 변형을 짧게 덧붙인다. 달력 기준 7일(오늘 포함)과 일별 가입자 수 쿼리는 필요할 때만 한 줄로 안내한다.\n4. 쿼리 작성만 하고 DB 접속, 실행, 파일 생성은 하지 않는다.",
+      "clarified_line": "그대로 수행. [가정: 가입 시각 컬럼은 `created_at`, DB는 PostgreSQL, \"최근 7일\"은 현재 시각 기준 직전 7×24시간]",
+      "kept": true,
+      "format_ok": true
+    }
+  ]
+}

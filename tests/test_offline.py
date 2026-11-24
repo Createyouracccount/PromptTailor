@@ -216,6 +216,69 @@ class TestDetection(unittest.TestCase):
             self.assertEqual(got, "sonnet-5")
 
 
+class TestSessionModelDetection(unittest.TestCase):
+    """/pm gets no hook input: the real session model comes from the session's
+    transcript via CLAUDE_CODE_SESSION_ID, not settings.json (R46)."""
+
+    SID = "2c7419f4-0c78-4978-bdd6-7240f8b791ef"
+
+    def setUp(self):
+        from unittest import mock
+        self._tmp = tempfile.TemporaryDirectory()
+        self.config = Path(self._tmp.name) / "config"
+        self.cwd = Path(self._tmp.name) / "proj"
+        (self.cwd / ".claude").mkdir(parents=True)
+        (self.cwd / ".claude" / "settings.json").write_text('{"model": "sonnet"}')
+        self._env = mock.patch.dict("os.environ", {"CLAUDE_CONFIG_DIR": str(self.config),
+                                                    "CLAUDE_CODE_SESSION_ID": self.SID})
+        self._env.start()
+
+    def tearDown(self):
+        self._env.stop()
+        self._tmp.cleanup()
+
+    def _transcript(self, *models):
+        d = self.config / "projects" / "-some-project"
+        d.mkdir(parents=True, exist_ok=True)
+        path = d / f"{self.SID}.jsonl"
+        path.write_text("".join(json.dumps({"type": "assistant", "message": {"model": m}}) + "\n"
+                                for m in models))
+        return path
+
+    def test_app_selected_model_beats_settings(self):
+        from prompt_tailor.detect import detect_model_with_source
+        self._transcript("claude-opus-5-5")
+        self.assertEqual(detect_model_with_source({"cwd": str(self.cwd)}), ("opus-5", "transcript"))
+
+    def test_falls_back_to_settings_before_first_reply(self):
+        from prompt_tailor.detect import detect_model_with_source
+        self.assertEqual(detect_model_with_source({"cwd": str(self.cwd)}), ("sonnet-5", "settings"))
+
+    def test_skips_synthetic_records(self):
+        path = self._transcript("claude-fable-5-2", "<synthetic>")
+        self.assertEqual(_model_from_transcript(str(path)), "claude-fable-5-2")
+
+    def test_rejects_odd_session_ids(self):
+        import os
+        from prompt_tailor.detect import session_transcript_path
+        self._transcript("claude-opus-5-5")
+        self.assertIsNotNone(session_transcript_path())
+        for bad in ("", "../../etc", "*", "a/b"):
+            os.environ["CLAUDE_CODE_SESSION_ID"] = bad
+            self.assertIsNone(session_transcript_path(), bad)
+
+    def test_reads_only_the_tail_of_large_transcripts(self):
+        from unittest import mock
+        from prompt_tailor import detect
+        path = self._transcript(*(["claude-haiku-4-5"] * 200 + ["claude-opus-5-5"]))
+        with mock.patch.object(detect, "TAIL_BYTES", 300):
+            self.assertEqual(detect._model_from_transcript(str(path)), "claude-opus-5-5")
+
+    def test_brief_names_the_source(self):
+        from prompt_tailor.session import build_session_brief
+        self.assertIn("opus-5 — 이 대화 기록 기준", build_session_brief("opus-5", "transcript"))
+        self.assertIn("앱에서 고른 모델과 다를 수 있음", build_session_brief("sonnet-5", "settings"))
+
 class TestHookSkipRules(unittest.TestCase):
     def test_slash_command(self):
         self.assertEqual(pm_hook.should_skip("/help me"), "slash-command")

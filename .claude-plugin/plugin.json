@@ -1,7 +1,7 @@
 {
   "name": "prompt-tailor",
   "description": "Model-aware prompt rewriting: /pm reads your rough request in the context of the conversation, fills the gaps for the Claude model you are running, and executes it. /feedback records misses locally so the rules can be improved. Input language is preserved.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": {
     "name": "Createyouracccount",
     "url": "https://github.com/Createyouracccount/PromptTailor"

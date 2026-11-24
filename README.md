@@ -124,6 +124,7 @@ Every claim is backed by ledgered experiments (blind pairwise LLM judging; [LOOP
 - **Vague-task outcome A/B (n=10, 8 valid): raw 4 — rewritten 4.** Even on vague requests — the territory where this tool claims benefit — single-turn headless execution showed no outcome-level advantage. Rewrites won when they turned vagueness into a reasonable default implementation; they lost when their investigation directives made the executor ask questions instead of producing anything — [eval/ab_vague_outcome_results.json](eval/ab_vague_outcome_results.json)
 
 - **v0.3 in-session `/pm` vs v0.2.5 (2026-11-24, session model stand-in: sonnet; judge: sonnet)** — on a new 12-item *context* benchmark ([bench/context_set.jsonl](bench/context_set.jsonl): conversation excerpt + follow-up such as "ok go ahead" / "re-run that" / "is this handled?"; synthetic examples, no real requests), both versions picked the right target 12/12 in both runs (the v0.2.5 template's "prefer conversation context" rule already recovers the context-blind rewrite). Where v0.3 differs is response quality: blind pairwise **10–1–1 and 11–0–1** for v0.3 (judges cited v0.2.5's leaked "rewrite/changes" chatter and scope creep). On the 10 vague tasks, responses that ended by only asking questions: **v0.3 0/10, v0.2.5 1/10**; questions were never turned into tasks (0/10 violations); already-clear requests kept as-is **17/20**. A first stall run was invalidated (the harness disabled tools without telling the executor) and is kept on record. Details: [runs/MEASUREMENT_LOG.md](runs/MEASUREMENT_LOG.md)
+- **Same benchmarks with Opus 5.5 as the session model (2026-11-24, judge still sonnet)**: right target **12/12** in both runs (v0.2.5: 11/12 and 12/12); blind pairwise **11–0–1** in both runs; question-only endings **0/10** vs v0.2.5 1/10; clear requests kept as-is **19/20**. Every Phase 4 bar still holds, and no result is worse than the sonnet stand-in. Fable 5.2 has not been measured. Run any model with `bench/run_v03_bench.py --session-model <id>`.
 
 **What this means**: the measured benefit is on vague, underspecified requests — the golden set's territory. Already-clear requests should be left alone, so since v0.2.0 the rewriter runs a **clarity gate** first: if your request is already specific it returns it untouched (`action: keep`; the hook then injects nothing). Gate accuracy on a balanced 40-prompt benchmark, measured over **3 repeated runs from a neutral cwd**: **90–95%** — vague recall 59/60 (misses almost never in the harmful direction), clear recall 16–18/20. An earlier single-run figure of 98% did not reproduce and has been retired. Dataset, runner, per-run results, and the stubborn borderline cases are documented in [BENCHMARK.md](BENCHMARK.md).
 
@@ -148,14 +149,14 @@ Real requests stay on the machine that typed them. That covers `/pm` logs, `case
 
 ## What we do NOT guarantee
 
-- **Higher task success is not proven — including on vague requests.** Prompt-quality wins are judge-based; the outcome data so far is the 3-task pilot (raw won 3–0) and the 10-task vague A/B (4–4 draw). Both ran headless single-turn, which structurally penalizes rewrites that ask good clarifying questions — interactive use may differ, but we have not measured that. The v0.3 measurements are also headless, single-judge, small-n, and use sonnet as a stand-in for your session model (real use is usually Opus/Fable); the context benchmark is synthetic: it mimics common follow-up patterns but contains no real requests.
+- **Higher task success is not proven — including on vague requests.** Prompt-quality wins are judge-based; the outcome data so far is the 3-task pilot (raw won 3–0) and the 10-task vague A/B (4–4 draw). Both ran headless single-turn, which structurally penalizes rewrites that ask good clarifying questions — interactive use may differ, but we have not measured that. The v0.3 measurements are also headless, single-judge, small-n, and use sonnet (and, once, Opus 5.5) as the session model, not Fable; the context benchmark is synthetic: it mimics common follow-up patterns but contains no real requests.
 - The rewriter occasionally adds specifics without an `[assumption]` tag (fidelity 4.8, not 5.0), and can misclassify intent.
 - All experiments are small-n, single-LLM-judge, and were run in this repo's environment.
 
 ## Development
 
 ```bash
-python3 -m unittest discover tests   # 66 offline tests, no LLM calls
+python3 -m unittest discover tests   # 72 offline tests, no LLM calls
 python3 eval/run_eval.py             # golden-set evaluation (spawns claude)
 ```
 

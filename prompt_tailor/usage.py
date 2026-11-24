@@ -20,8 +20,9 @@ from pathlib import Path
 from statistics import median
 from typing import Iterable
 
-# Actions: rewrite | keep | skip | error
-VALID_ACTIONS = ("rewrite", "keep", "skip", "error")
+# Actions: rewrite | keep | skip | error | session (v0.3 in-session /pm: no gate
+# verdict is known to the backend — the session model decides)
+VALID_ACTIONS = ("rewrite", "keep", "skip", "error", "session")
 
 
 def usage_path() -> Path:

@@ -4,6 +4,7 @@ Usage:
     prompt-tailor "대충 쓴 요청" --model fable-5
     echo "요청" | prompt-tailor --model opus-5
     prompt-tailor stats [--json] [--share]
+    prompt-tailor cases [--json] [--export PATH]
 """
 
 from __future__ import annotations
@@ -20,6 +21,7 @@ from .engine import (
     ClaudeCLINotFoundError,
     rewrite,
 )
+from .cases import format_cases, load_cases, to_bench_items
 from .usage import format_stats, load_events, record_event, summarize
 
 
@@ -46,11 +48,38 @@ def stats_main(argv: list[str]) -> int:
     return 0
 
 
+def cases_main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(
+        prog="prompt-tailor cases",
+        description="/prompt-tailor:feedback 으로 기록한 로컬 실패 사례 보기·내보내기 (전송 없음)",
+    )
+    parser.add_argument("--json", action="store_true", help="사례 전체를 JSON으로 출력")
+    parser.add_argument(
+        "--export", metavar="PATH",
+        help="맥락 벤치(bench/context_set.jsonl) 형식 JSONL로 내보내기",
+    )
+    args = parser.parse_args(argv)
+    cases = load_cases()
+    if args.export:
+        items = to_bench_items(cases)
+        with open(args.export, "w", encoding="utf-8") as f:
+            for it in items:
+                f.write(json.dumps(it, ensure_ascii=False) + "\n")
+        print(f"{len(items)}건 내보냄: {args.export}")
+    elif args.json:
+        print(json.dumps(cases, ensure_ascii=False, indent=2))
+    else:
+        print(format_cases(cases))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
     if argv[:1] == ["stats"]:
         return stats_main(argv[1:])
+    if argv[:1] == ["cases"]:
+        return cases_main(argv[1:])
     parser = argparse.ArgumentParser(
         prog="prompt-tailor",
         description="대충 쓴 요청을 대상 Claude 모델에 맞는 프롬프트로 재작성합니다.",

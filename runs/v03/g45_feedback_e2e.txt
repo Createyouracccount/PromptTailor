@@ -1,0 +1,7 @@
+# G4-5 E2E (2026-11-24, claude -p --plugin-dir, sonnet, PROMPT_TAILOR_DATA_DIR=tmp)
+## usage.jsonl
+{"ts": "2026-11-24T12:53:51", "source": "pm", "action": "session", "target": "sonnet-5", "latency_s": 0.0}
+## cases.jsonl
+{"ts": "2026-11-24T12:54:29", "raw": "파이썬으로 퀵정렬 함수 짜줘", "context": "미상 (직전 대화 맥락 없이 새 세션에서 단독으로 호출된 요청)", "interpretation": "해석: 파이썬으로 퀵정렬 함수를 작성한다. 보강: 그대로 수행. [가정: 오름차순, 원본을 바꾸지 않고 새 리스트를 반환하는 방식]. 이후 스크래치패드에 quick_sort.py 파일을 만들어 저장하고 실행 테스트까지 한 뒤, 답변에 코드를 함께 보여줌.", "problem": "사용자가 파일로 저장하지 말고 답변에 코드만 보여주길 원했는데, 파일을 생성해 저장하고 테스트까지 수행함.", "expected": "코드 작성 요청이므로 파일을 만들지 않고 답변에 퀵정렬 함수 코드만 바로 보여줬어야 함. 검증이 필요하면 파일 저장 없이 처리하거나 생략.", "category": "over_scope", "version": "0.3.0"}
+## export
+{"id": "case001", "kind": "followup", "context": "미상 (직전 대화 맥락 없이 새 세션에서 단독으로 호출된 요청)", "raw": "파이썬으로 퀵정렬 함수 짜줘", "expected": "코드 작성 요청이므로 파일을 만들지 않고 답변에 퀵정렬 함수 코드만 바로 보여줬어야 함. 검증이 필요하면 파일 저장 없이 처리하거나 생략.", "source": "feedback:over_scope:2026-11-24T12:54:29"}

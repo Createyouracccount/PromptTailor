@@ -8,7 +8,7 @@
     {
       "name": "prompt-tailor",
       "source": "./",
-      "description": "Model-aware prompt rewriting: /pm rewrites a rough request for the Claude model you are running, routed by task intent."
+      "description": "Model-aware prompt rewriting: /pm reads a rough request in conversation context, fills the gaps for your Claude model, and runs it; /feedback logs misses locally for the next improvement round."
     }
   ]
 }

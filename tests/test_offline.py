@@ -83,7 +83,9 @@ class TestBuildMetaPrompt(unittest.TestCase):
         # clarity gate (R35); hook E2E latency re-measured after each change.
         # 1100->1200 for the explicit language rule (R40: English input was
         # being rewritten into Korean 4/4 before it).
-        self.assertLess(len(concise), 1200)
+        # 1200->1250 for the anti-stall rule (R43: investigation directives made
+        # headless executors ask instead of produce — vague A/B R39)
+        self.assertLess(len(concise), 1250)
         self.assertLess(len(concise), len(full) / 2.5)  # ~1/3 in practice; ratio guard only
 
     def test_concise_exists_for_all_profiles(self):
@@ -101,7 +103,8 @@ class TestBuildMetaPrompt(unittest.TestCase):
         # +clarity gate line R35 — E2E re-measured)
         # 700->800 for the explicit language rule (R40); ~+50 tokens, negligible
         # against the ~29k-token claude -p baseline.
-        self.assertLess(len(lean), 800)
+        # 800->850 for the anti-stall rule (R43)
+        self.assertLess(len(lean), 850)
 
     def test_full_meta_includes_intent_rules(self):
         meta = build_meta_prompt("로그인 버그 고쳐줘", "fable-5")
@@ -464,3 +467,139 @@ class TestUsageRecords(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class _DataDirCase(unittest.TestCase):
+    def setUp(self):
+        import os
+        self._tmp = tempfile.TemporaryDirectory()
+        os.environ["PROMPT_TAILOR_DATA_DIR"] = self._tmp.name
+
+    def tearDown(self):
+        import os
+        del os.environ["PROMPT_TAILOR_DATA_DIR"]
+        self._tmp.cleanup()
+
+
+class TestSessionBrief(unittest.TestCase):
+    """v0.3 in-session /pm: the brief is what the session model follows."""
+
+    def test_brief_core_rules_present(self):
+        from prompt_tailor.session import KEEP_MARKER, build_session_brief
+        brief = build_session_brief("opus-5")
+        for needle in ("대화 맥락", "지시어", "질문", KEEP_MARKER, "[가정", "**해석**", "**보강**",
+                       "되묻기보다 진행", "English RAW"):
+            self.assertIn(needle, brief)
+        self.assertIn("opus-5 (감지됨)", brief)
+
+    def test_all_profiles_listed_and_unknown_detection(self):
+        from prompt_tailor.session import SESSION_PROFILES, build_session_brief
+        brief = build_session_brief(None)
+        for stem in SESSION_PROFILES:
+            self.assertIn(stem, brief)
+        self.assertNotIn("(감지됨)", brief)
+        self.assertIn("알 수 없음", brief)
+        self.assertEqual(build_session_brief("gpt-4"), brief)  # unknown -> no detection
+
+    def test_intent_rules_embedded(self):
+        from prompt_tailor.session import build_session_brief
+        brief = build_session_brief()
+        for intent in ("fix/debug", "build", "research", "refactor", "docs"):
+            self.assertIn(intent, brief)
+
+    def test_brief_stays_compact(self):
+        from prompt_tailor.session import build_session_brief
+        # injected into the main conversation on every /pm — keep it bounded
+        self.assertLess(len(build_session_brief("fable-5")), 2600)
+
+
+class TestPmCommandInSession(_DataDirCase):
+    def _run(self, argv):
+        import contextlib
+        import io
+        spec = importlib.util.spec_from_file_location("pm_command", ROOT / "scripts" / "pm_command.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        buf = io.StringIO()
+        from unittest import mock
+        from prompt_tailor import engine
+        with mock.patch.object(engine, "call_claude", side_effect=AssertionError("LLM called")), \
+             mock.patch.object(engine, "call_api", side_effect=AssertionError("LLM called")), \
+             mock.patch.object(sys, "argv", ["pm_command.py", *argv]), \
+             contextlib.redirect_stdout(buf):
+            rc = mod.main()
+        return rc, buf.getvalue()
+
+    def test_no_llm_call_and_prints_brief(self):
+        rc, out = self._run([])
+        self.assertEqual(rc, 0)
+        self.assertIn("**해석**", out)
+
+    def test_records_session_event_without_text(self):
+        from prompt_tailor import usage
+        self._run(["비밀 프롬프트"])  # stray args are ignored, never logged
+        events = usage.load_events()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["action"], "session")
+        self.assertNotIn("비밀", usage.usage_path().read_text(encoding="utf-8"))
+
+    def test_command_template_passes_no_arguments_to_shell(self):
+        for path in (ROOT / "commands" / "pm.md", ROOT / "claude-code" / "commands" / "pm.md"):
+            text = path.read_text(encoding="utf-8")
+            shell_lines = [l for l in text.splitlines() if l.startswith("!`")]
+            self.assertEqual(len(shell_lines), 1, path)
+            self.assertNotIn("$ARGUMENTS", shell_lines[0], path)
+            self.assertIn("$ARGUMENTS", text, path)  # RAW reaches the model via the template
+
+
+class TestCases(_DataDirCase):
+    def test_record_and_load(self):
+        from prompt_tailor import cases
+        case, total = cases.record_case(
+            {"raw": "웅 봐줘", "problem": "다른 파일을 봄", "category": "context_miss",
+             "context": "직전에 GATES.md 얘기", "junk": "x"}, version="0.3.0")
+        self.assertEqual(total, 1)
+        self.assertEqual(case["category"], "context_miss")
+        self.assertNotIn("junk", case)
+        self.assertEqual(cases.load_cases()[0]["version"], "0.3.0")
+
+    def test_missing_required_raises_and_unknown_category(self):
+        from prompt_tailor import cases
+        with self.assertRaises(ValueError):
+            cases.normalize_case({"raw": "x"})
+        self.assertEqual(cases.normalize_case({"raw": "x", "problem": "y", "category": "zzz"})["category"], "other")
+
+    def test_export_to_bench_items(self):
+        from prompt_tailor import cases
+        cases.record_case({"raw": "이거 왜 이래?", "problem": "수정해버림", "category": "question_to_task",
+                           "expected": "원인만 설명"})
+        items = cases.to_bench_items(cases.load_cases())
+        self.assertEqual(items[0]["kind"], "question")
+        self.assertEqual(items[0]["expected"], "원인만 설명")
+        self.assertEqual(set(items[0]), {"id", "kind", "context", "raw", "expected", "source"})
+
+    def test_record_case_script_stdin(self):
+        import subprocess
+        payload = json.dumps({"raw": "그럼 진행해", "problem": "되묻기만 함", "category": "stalled"})
+        proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "record_case.py")],
+                              input=payload, capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("누적 1건", proc.stdout)
+        bad = subprocess.run([sys.executable, str(ROOT / "scripts" / "record_case.py")],
+                             input="not json", capture_output=True, text=True)
+        self.assertEqual(bad.returncode, 1)
+
+    def test_cli_cases_list_and_export(self):
+        import contextlib
+        import io
+        from prompt_tailor import cases
+        from prompt_tailor.cli import main as cli_main
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            cli_main(["cases"])
+        self.assertIn("기록된 사례가 없습니다", buf.getvalue())
+        cases.record_case({"raw": "a", "problem": "b"})
+        out = Path(self._tmp.name) / "x.jsonl"
+        with contextlib.redirect_stdout(io.StringIO()):
+            cli_main(["cases", "--export", str(out)])
+        self.assertEqual(len(out.read_text(encoding="utf-8").splitlines()), 1)

@@ -21,6 +21,10 @@ from prompt_tailor.cases import CATEGORIES, cases_path, load_cases, record_case 
 
 
 def main(argv: list[str]) -> int:
+    # Case text is Korean more often than not; Windows pipes default to a legacy codepage.
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     script = Path(__file__).resolve()
     if argv[:1] == ["--where"]:
         print(f"기록 명령: python3 {script} <<'CASE_EOF'\n{{...JSON...}}\nCASE_EOF")

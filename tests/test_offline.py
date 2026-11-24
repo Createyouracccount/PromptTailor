@@ -582,11 +582,11 @@ class TestCases(_DataDirCase):
         import subprocess
         payload = json.dumps({"raw": "그럼 진행해", "problem": "되묻기만 함", "category": "stalled"})
         proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "record_case.py")],
-                              input=payload, capture_output=True, text=True)
+                              input=payload, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn("누적 1건", proc.stdout)
         bad = subprocess.run([sys.executable, str(ROOT / "scripts" / "record_case.py")],
-                             input="not json", capture_output=True, text=True)
+                             input="not json", capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(bad.returncode, 1)
 
     def test_cli_cases_list_and_export(self):

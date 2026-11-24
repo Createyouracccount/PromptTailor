@@ -26,6 +26,8 @@ from prompt_tailor.usage import record_event  # noqa: E402
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):  # Korean brief on Windows legacy codepages
+        sys.stdout.reconfigure(encoding="utf-8")
     t0 = time.time()
     try:
         detected = detect_model({"cwd": os.getcwd()})
